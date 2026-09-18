@@ -1,35 +1,57 @@
 <%- include("partials/header") %>
 
-<section class="page-content">
-  <h2>Project Categories</h2>
+<section class="page-header">
+    <h1><%= title %></h1>
 
-  <div class="card">
-    <h3>Environmental</h3>
     <p>
-      Projects that help protect and improve the environment.
+        Browse service projects by category.
     </p>
-  </div>
+</section>
 
-  <div class="card">
-    <h3>Educational</h3>
-    <p>
-      Projects focused on learning and educational support.
-    </p>
-  </div>
+<section class="categories">
+    <div class="card category-card">
+        <h2>Environmental</h2>
 
-  <div class="card">
-    <h3>Community Service</h3>
-    <p>
-      Projects designed to strengthen local communities.
-    </p>
-  </div>
+        <p>
+            Projects focused on protecting the environment,
+            conservation, cleanup, and sustainability.
+        </p>
 
-  <div class="card">
-    <h3>Health and Wellness</h3>
-    <p>
-      Projects that support health and personal well-being.
-    </p>
-  </div>
+        <a href="/projects">View Projects</a>
+    </div>
+
+    <div class="card category-card">
+        <h2>Educational</h2>
+
+        <p>
+            Projects focused on education, tutoring, mentoring,
+            literacy, and learning.
+        </p>
+
+        <a href="/projects">View Projects</a>
+    </div>
+
+    <div class="card category-card">
+        <h2>Community Service</h2>
+
+        <p>
+            Projects that support communities through volunteer
+            activities and community development.
+        </p>
+
+        <a href="/projects">View Projects</a>
+    </div>
+
+    <div class="card category-card">
+        <h2>Health and Wellness</h2>
+
+        <p>
+            Projects that promote health, wellness, awareness,
+            and healthy communities.
+        </p>
+
+        <a href="/projects">View Projects</a>
+    </div>
 </section>
 
 <%- include("partials/footer") %>

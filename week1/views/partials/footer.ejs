@@ -1,11 +1,82 @@
 </main>
 
-<footer>
-  <p>
-    &copy; <%= new Date().getFullYear() %>
-    Abraham Watongola Kaana James.
-  </p>
+<footer class="site-footer">
+
+    <div class="footer-container">
+
+        <div class="footer-content">
+
+            <section class="footer-section">
+
+                <div class="footer-brand">
+                    <span class="footer-logo">SP</span>
+
+                    <h2>Service Projects</h2>
+                </div>
+
+                <p>
+                    Connecting people with meaningful service
+                    opportunities and organizations that strengthen
+                    communities.
+                </p>
+
+            </section>
+
+
+            <section class="footer-section">
+
+                <h2>Get Involved</h2>
+
+                <p>
+                    Find opportunities to volunteer your time,
+                    skills, and resources to support your community.
+                </p>
+
+            </section>
+
+
+            <section class="footer-section">
+
+                <h2>Our Focus</h2>
+
+                <p>
+                    Environmental service, education, community
+                    development, health, and wellness.
+                </p>
+
+            </section>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                &copy; <span id="currentYear"></span>
+                Service Projects
+            </p>
+
+            <p>
+                Last Modified:
+                <span id="lastModified"></span>
+            </p>
+
+        </div>
+
+    </div>
+
 </footer>
 
+<script src="/js/navigation.js"></script>
+
+<script>
+    document.getElementById("currentYear").textContent =
+        new Date().getFullYear();
+
+    document.getElementById("lastModified").textContent =
+        document.lastModified;
+</script>
+
 </body>
+
 </html>

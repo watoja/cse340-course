@@ -1,16 +1,96 @@
 <%- include("partials/header") %>
 
 <section class="hero">
-  <h2>Welcome</h2>
 
-  <p>
-    Discover organizations and community service projects
-    that make a difference.
-  </p>
+    <div class="hero-image">
+        <img
+            src="/images/service.jpg"
+            alt="Volunteers working together on a community service project">
+    </div>
 
-  <a class="button" href="/projects">
-    View Service Projects
-  </a>
+    <div class="hero-content">
+
+        <h1><%= title %></h1>
+
+        <h2>Community Service Projects</h2>
+
+        <p>
+            Discover organizations and service opportunities
+            where you can use your time and skills to make
+            a difference in your community.
+        </p>
+
+        <a href="/projects" class="button">
+            Explore Service Projects
+        </a>
+
+    </div>
+
 </section>
+
+
+<section class="section-heading">
+
+    <h2>Explore Our Site</h2>
+
+    <p>
+        Find organizations, projects, and service opportunities
+        in different areas of community service.
+    </p>
+
+</section>
+
+
+<section class="cards">
+
+    <article class="card">
+
+        <h2>Organizations</h2>
+
+        <p>
+            Learn about organizations that provide opportunities
+            for community service.
+        </p>
+
+        <a href="/organizations" class="card-link">
+            View Organizations
+        </a>
+
+    </article>
+
+
+    <article class="card">
+
+        <h2>Service Projects</h2>
+
+        <p>
+            Explore projects where volunteers can contribute
+            their time and skills.
+        </p>
+
+        <a href="/projects" class="card-link">
+            View Projects
+        </a>
+
+    </article>
+
+
+    <article class="card">
+
+        <h2>Categories</h2>
+
+        <p>
+            Browse service opportunities by different areas
+            of community need.
+        </p>
+
+        <a href="/categories" class="card-link">
+            View Categories
+        </a>
+
+    </article>
+
+</section>
+
 
 <%- include("partials/footer") %>

@@ -1,57 +1,63 @@
 <%- include("partials/header") %>
 
-<section class="page-header">
+<section class="page-banner">
     <h1><%= title %></h1>
 
     <p>
-        Browse service projects by category.
+        Find service opportunities based on different
+        community needs.
     </p>
 </section>
 
-<section class="categories">
-    <div class="card category-card">
+<section class="cards">
+
+    <article class="card category-card">
+        <div class="category-icon">E</div>
+
         <h2>Environmental</h2>
 
         <p>
-            Projects focused on protecting the environment,
-            conservation, cleanup, and sustainability.
+            Projects focused on protecting and improving
+            the environment.
         </p>
+    </article>
 
-        <a href="/projects">View Projects</a>
-    </div>
 
-    <div class="card category-card">
+    <article class="card category-card">
+        <div class="category-icon">ED</div>
+
         <h2>Educational</h2>
 
         <p>
-            Projects focused on education, tutoring, mentoring,
-            literacy, and learning.
+            Opportunities that support learning, teaching,
+            and educational development.
         </p>
+    </article>
 
-        <a href="/projects">View Projects</a>
-    </div>
 
-    <div class="card category-card">
+    <article class="card category-card">
+        <div class="category-icon">C</div>
+
         <h2>Community Service</h2>
 
         <p>
-            Projects that support communities through volunteer
-            activities and community development.
+            Projects that strengthen and support local
+            communities.
         </p>
+    </article>
 
-        <a href="/projects">View Projects</a>
-    </div>
 
-    <div class="card category-card">
+    <article class="card category-card">
+        <div class="category-icon">H</div>
+
         <h2>Health and Wellness</h2>
 
         <p>
-            Projects that promote health, wellness, awareness,
-            and healthy communities.
+            Service opportunities that promote health,
+            wellness, and healthy communities.
         </p>
+    </article>
 
-        <a href="/projects">View Projects</a>
-    </div>
 </section>
 
 <%- include("partials/footer") %>

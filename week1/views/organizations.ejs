@@ -1,26 +1,75 @@
 <%- include("partials/header") %>
 
-<section class="page-content">
-  <h2>Organizations</h2>
+<section class="page-banner">
+    <h1><%= title %></h1>
 
-  <p>
-    Explore organizations that provide opportunities
-    for community service.
-  </p>
-
-  <div class="card">
-    <h3>Community Helping Hands</h3>
     <p>
-      An organization focused on helping local communities.
+        Explore organizations that provide opportunities
+        to serve and strengthen communities.
     </p>
-  </div>
+</section>
 
-  <div class="card">
-    <h3>Green Future</h3>
-    <p>
-      An organization supporting environmental projects.
-    </p>
-  </div>
+<section class="cards">
+
+    <article class="card">
+        <div class="card-image">
+            <img
+                src="/images/helping.jpg"
+                alt="Volunteers working together in a community organization">
+        </div>
+
+        <h2>Nicoville foundation</h2>
+
+        <p>
+            Nicoville foundation provides opportunities for volunteers
+            to support local community needs by catering for young vulnerable populations through school.
+        </p>
+
+        <a href="/projects" class="card-link">
+            View Projects
+        </a>
+    </article>
+
+
+    <article class="card">
+        <div class="card-image">
+            <img
+                src="/images/greenify.jpg"
+                alt="Volunteers serving members of the community">
+        </div>
+
+        <h2>GreeniFy</h2>
+
+        <p>
+            GreeniFy works with volunteers to support
+            community development and service through environmental conservation.
+        </p>
+
+        <a href="/projects" class="card-link">
+            View Projects
+        </a>
+    </article>
+
+
+    <article class="card">
+        <div class="card-image">
+            <img
+                src="/images/WasteCorp.jpg"
+                alt="Volunteers participating in a community service activity">
+        </div>
+
+        <h2>WasteCorp</h2>
+
+        <p>
+            WasteCorp provides service opportunities
+            for people who want to learn better practices of maximum utilization of resources to help others.
+        </p>
+
+        <a href="/projects" class="card-link">
+            View Projects
+        </a>
+    </article>
+
 </section>
 
 <%- include("partials/footer") %>

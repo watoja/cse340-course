@@ -1,28 +1,47 @@
 <%- include("partials/header") %>
 
-<section class="page-content">
-  <h2>Service Projects</h2>
+<section class="page-banner">
+    <h1><%= title %></h1>
 
-  <div class="card">
-    <h3>Community Cleanup</h3>
     <p>
-      Help clean and improve a local community area.
+        Explore service projects and find ways to contribute
+        to your community.
     </p>
-  </div>
-
-  <div class="card">
-    <h3>School Support</h3>
-    <p>
-      Volunteer to support educational activities.
-    </p>
-  </div>
-
-  <div class="card">
-    <h3>Health Awareness</h3>
-    <p>
-      Participate in activities that promote healthy communities.
-    </p>
-  </div>
 </section>
 
+<section class="cards">
+
+    <article class="card">
+        <h2>Community Cleanup</h2>
+        <p>
+            Help clean and improve shared community spaces.
+        </p>
+        <span class="project-category">
+            Community Service
+        </span>
+    </article>
+
+    <article class="card">
+        <h2>Educational Support</h2>
+        <p>
+            Support students and educational programs through
+            volunteer service.
+        </p>
+        <span class="project-category">
+            Educational
+        </span>
+    </article>
+
+    <article class="card">
+        <h2>Environmental Project</h2>
+        <p>
+            Participate in activities that help protect and
+            improve the environment.
+        </p>
+        <span class="project-category">
+            Environmental
+        </span>
+    </article>
+
+</section>
 <%- include("partials/footer") %>

@@ -1,75 +1,96 @@
 <%- include("partials/header") %>
 
-<section class="page-banner">
-    <h1><%= title %></h1>
+<main class="organizations-page">
 
-    <p>
-        Explore organizations that provide opportunities
-        to serve and strengthen communities.
-    </p>
-</section>
-
-<section class="cards">
-
-    <article class="card">
-        <div class="card-image">
-            <img
-                src="/images/helping.jpg"
-                alt="Volunteers working together in a community organization">
-        </div>
-
-        <h2>Nicoville foundation</h2>
-
+    <section class="page-header">
+        <h1><%= title %></h1>
         <p>
-            Nicoville foundation provides opportunities for volunteers
-            to support local community needs by catering for young vulnerable populations through school.
+            Learn about organizations that provide opportunities
+            for community service.
         </p>
+    </section>
 
-        <a href="/projects" class="card-link">
-            View Projects
-        </a>
-    </article>
+    <section class="organization-list">
 
+        <% if (organizations && organizations.length > 0) { %>
 
-    <article class="card">
-        <div class="card-image">
-            <img
-                src="/images/greenify.jpg"
-                alt="Volunteers serving members of the community">
-        </div>
+            <div class="organization-cards">
 
-        <h2>GreeniFy</h2>
+                <% organizations.forEach(organization => { %>
 
-        <p>
-            GreeniFy works with volunteers to support
-            community development and service through environmental conservation.
-        </p>
+                    <article class="organization-card">
 
-        <a href="/projects" class="card-link">
-            View Projects
-        </a>
-    </article>
+                        <% if (organization.image) { %>
 
+                            <div class="organization-image">
+                                <img
+                                    src="/images/<%= organization.image %>"
+                                    alt="<%= organization.organization_name %>"
+                                >
+                            </div>
 
-    <article class="card">
-        <div class="card-image">
-            <img
-                src="/images/WasteCorp.jpg"
-                alt="Volunteers participating in a community service activity">
-        </div>
+                        <% } %>
 
-        <h2>WasteCorp</h2>
+                        <div class="organization-content">
 
-        <p>
-            WasteCorp provides service opportunities
-            for people who want to learn better practices of maximum utilization of resources to help others.
-        </p>
+                            <h2>
+                                <%= organization.organization_name %>
+                            </h2>
 
-        <a href="/projects" class="card-link">
-            View Projects
-        </a>
-    </article>
+                            <p>
+                                <%= organization.description %>
+                            </p>
 
-</section>
+                            <% if (organization.location) { %>
+                                <p>
+                                    <strong>Location:</strong>
+                                    <%= organization.location %>
+                                </p>
+                            <% } %>
+
+                            <% if (organization.phone) { %>
+                                <p>
+                                    <strong>Phone:</strong>
+                                    <%= organization.phone %>
+                                </p>
+                            <% } %>
+
+                            <% if (organization.contact_email) { %>
+                                <p>
+                                    <strong>Email:</strong>
+                                    <%= organization.contact_email %>
+                                </p>
+                            <% } %>
+
+                            <% if (organization.website) { %>
+                                <p>
+                                    <strong>Website:</strong>
+                                    <a
+                                        href="<%= organization.website %>"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Visit website
+                                    </a>
+                                </p>
+                            <% } %>
+
+                        </div>
+
+                    </article>
+
+                <% }) %>
+
+            </div>
+
+        <% } else { %>
+
+            <p>No organizations are currently available.</p>
+
+        <% } %>
+
+    </section>
+
+</main>
 
 <%- include("partials/footer") %>

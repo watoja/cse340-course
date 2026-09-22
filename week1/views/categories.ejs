@@ -1,63 +1,49 @@
 <%- include("partials/header") %>
 
-<section class="page-banner">
-    <h1><%= title %></h1>
+<main class="categories-page">
 
-    <p>
-        Find service opportunities based on different
-        community needs.
-    </p>
-</section>
-
-<section class="cards">
-
-    <article class="card category-card">
-        <div class="category-icon">E</div>
-
-        <h2>Environmental</h2>
-
+    <section class="page-header">
+        <h1><%= title %></h1>
         <p>
-            Projects focused on protecting and improving
-            the environment.
+            Explore the different categories of service projects
+            available in the community.
         </p>
-    </article>
+    </section>
 
+    <section class="category-list">
 
-    <article class="card category-card">
-        <div class="category-icon">ED</div>
+        <% if (categories && categories.length > 0) { %>
 
-        <h2>Educational</h2>
+            <div class="category-cards">
 
-        <p>
-            Opportunities that support learning, teaching,
-            and educational development.
-        </p>
-    </article>
+                <% categories.forEach(category => { %>
 
+                    <article class="category-card">
 
-    <article class="card category-card">
-        <div class="category-icon">C</div>
+                        <h2>
+                            <%= category.category_name %>
+                        </h2>
 
-        <h2>Community Service</h2>
+                        <% if (category.description) { %>
+                            <p>
+                                <%= category.description %>
+                            </p>
+                        <% } %>
 
-        <p>
-            Projects that strengthen and support local
-            communities.
-        </p>
-    </article>
+                    </article>
 
+                <% }) %>
 
-    <article class="card category-card">
-        <div class="category-icon">H</div>
+            </div>
 
-        <h2>Health and Wellness</h2>
+        <% } else { %>
 
-        <p>
-            Service opportunities that promote health,
-            wellness, and healthy communities.
-        </p>
-    </article>
+            <p>No categories are currently available.</p>
 
-</section>
+        <% } %>
+
+    </section>
+
+</main>
 
 <%- include("partials/footer") %>

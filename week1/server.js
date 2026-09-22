@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import { testConnection } from "./src/models/db.js";
+import { getAllProjects } from "./src/models/projects.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,33 +14,54 @@ const app = express();
 const PORT = process.env.PORT || 5500;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
-// Set EJS as the view engine
 app.set("view engine", "ejs");
-
-// Set the location of the views
 app.set("views", path.join(__dirname, "views"));
 
-// Middleware
 app.use(express.urlencoded({ extended: true }));
-
-// Serve static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Home page
+/**
+ * Home page
+ */
 app.get("/", (req, res) => {
     res.render("index", {
         title: "Home"
     });
 });
 
-// Categories page
+/**
+ * Categories page
+ */
 app.get("/categories", (req, res) => {
     res.render("categories", {
         title: "Categories"
     });
 });
 
-// 404 page
+/**
+ * Service Projects page
+ */
+app.get("/projects", async (req, res) => {
+    try {
+        const projects = await getAllProjects();
+
+        res.render("projects", {
+            title: "Service Projects",
+            projects
+        });
+    } catch (error) {
+        console.error("Error loading service projects:", error);
+
+        res.status(500).render("error", {
+            title: "Server Error",
+            message: "Unable to load service projects."
+        });
+    }
+});
+
+/**
+ * 404 error handler
+ */
 app.use((req, res) => {
     res.status(404).render("error", {
         title: "Page Not Found",
@@ -47,19 +69,27 @@ app.use((req, res) => {
     });
 });
 
-// Start server and test database connection
+/**
+ * Start the server and test the database connection.
+ */
 app.listen(PORT, async () => {
     try {
         await testConnection();
 
+        // Test the projects query and display the results in the console.
+        const projects = await getAllProjects();
+
+        console.log("Service projects retrieved from database:");
+        console.table(projects);
+
         console.log(
-            `Server is running at http://127.0.0.1:${PORT}`
+            `Server is running at http://localhost:${PORT}`
         );
 
         console.log(`Environment: ${NODE_ENV}`);
     } catch (error) {
         console.error(
-            "Error connecting to the database:",
+            "Error connecting to the database or retrieving projects:",
             error.message
         );
     }

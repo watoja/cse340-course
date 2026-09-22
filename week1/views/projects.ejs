@@ -1,47 +1,57 @@
 <%- include("partials/header") %>
 
-<section class="page-banner">
-    <h1><%= title %></h1>
+<main class="projects-page">
+    <section class="page-header">
+        <h1><%= title %></h1>
+        <p>Explore available community service projects.</p>
+    </section>
 
-    <p>
-        Explore service projects and find ways to contribute
-        to your community.
-    </p>
-</section>
+    <section class="projects-list">
+        <% if (projects && projects.length > 0) { %>
 
-<section class="cards">
+            <div class="project-cards">
+                <% projects.forEach(project => { %>
 
-    <article class="card">
-        <h2>Community Cleanup</h2>
-        <p>
-            Help clean and improve shared community spaces.
-        </p>
-        <span class="project-category">
-            Community Service
-        </span>
-    </article>
+                    <article class="project-card">
+                        <h2>
+                            Date:
+                            <%= new Date(`${project.project_date}T00:00:00`).toLocaleDateString(
+                                undefined,
+                                {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric"
+                                }
+                            ) %>
+                            :
+                            <%= project.project_name %>
+                            (<%= project.organization_name %>)
+                        </h2>
 
-    <article class="card">
-        <h2>Educational Support</h2>
-        <p>
-            Support students and educational programs through
-            volunteer service.
-        </p>
-        <span class="project-category">
-            Educational
-        </span>
-    </article>
+                        <p><%= project.description %></p>
 
-    <article class="card">
-        <h2>Environmental Project</h2>
-        <p>
-            Participate in activities that help protect and
-            improve the environment.
-        </p>
-        <span class="project-category">
-            Environmental
-        </span>
-    </article>
+                        <% if (project.location) { %>
+                            <p>
+                                <strong>Location:</strong>
+                                <%= project.location %>
+                            </p>
+                        <% } %>
 
-</section>
+                        <p>
+                            <strong>Volunteers Needed:</strong>
+                            <%= project.volunteers_needed %>
+                        </p>
+                    </article>
+
+                <% }) %>
+            </div>
+
+        <% } else { %>
+
+            <p>No service projects are currently available.</p>
+
+        <% } %>
+    </section>
+</main>
+
 <%- include("partials/footer") %>

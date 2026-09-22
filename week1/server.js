@@ -1,44 +1,66 @@
-const express = require("express");
-const path = require("path");
+import "dotenv/config";
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import { testConnection } from "./src/models/db.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
+
 const PORT = process.env.PORT || 5500;
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 // Set EJS as the view engine
 app.set("view engine", "ejs");
 
-// Serve static files from the public folder
+// Set the location of the views
+app.set("views", path.join(__dirname, "views"));
+
+// Middleware
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Home route
+// Home page
 app.get("/", (req, res) => {
-  res.render("index", {
-    title: "Home"
-  });
+    res.render("index", {
+        title: "Home"
+    });
 });
 
-// Organizations route
-app.get("/organizations", (req, res) => {
-  res.render("organizations", {
-    title: "Organizations"
-  });
-});
-
-// Projects route
-app.get("/projects", (req, res) => {
-  res.render("projects", {
-    title: "Service Projects"
-  });
-});
-
-// Categories route
+// Categories page
 app.get("/categories", (req, res) => {
-  res.render("categories", {
-    title: "Categories"
-  });
+    res.render("categories", {
+        title: "Categories"
+    });
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// 404 page
+app.use((req, res) => {
+    res.status(404).render("error", {
+        title: "Page Not Found",
+        message: "The page you requested could not be found."
+    });
+});
+
+// Start server and test database connection
+app.listen(PORT, async () => {
+    try {
+        await testConnection();
+
+        console.log(
+            `Server is running at http://127.0.0.1:${PORT}`
+        );
+
+        console.log(`Environment: ${NODE_ENV}`);
+    } catch (error) {
+        console.error(
+            "Error connecting to the database:",
+            error.message
+        );
+    }
 });

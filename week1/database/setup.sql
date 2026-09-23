@@ -119,7 +119,7 @@ VALUES
     'info@redcrossug.org',
     '+256 312 260 001',
     'Kampala, Uganda',
-    'red-cross.jpg'
+    'redcross.jpg'
 ),
 (
     'Uganda Wildlife Authority',
@@ -128,7 +128,7 @@ VALUES
     'info@ugandawildlife.org',
     '+256 414 355 000',
     'Kampala, Uganda',
-    'wildlife-authority.jpg'
+    'uwa.jpg'
 ),
 (
     'Reach A Hand Uganda',
@@ -137,7 +137,7 @@ VALUES
     'info@reachahand.org',
     '+256 393 266 229',
     'Kampala, Uganda',
-    'reach-a-hand.jpg'
+    'reach.jpg'
 );
 
 

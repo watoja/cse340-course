@@ -6,9 +6,9 @@ import { Pool } from "pg";
  */
 const pool = new Pool({
     connectionString: process.env.DB_URL,
-    ssl: process.env.NODE_ENV === "development"
-        ? { rejectUnauthorized: false }
-        : true
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 /**
@@ -17,10 +17,7 @@ const pool = new Pool({
  */
 let db = pool;
 
-if (
-    process.env.NODE_ENV === "development" &&
-    process.env.ENABLE_SQL_LOGGING === "true"
-) {
+if (process.env.ENABLE_SQL_LOGGING === "true") {
     db = {
         async query(text, params) {
             try {
@@ -54,7 +51,7 @@ if (
 }
 
 /**
- * Tests the database connection.
+ * Test the PostgreSQL database connection.
  */
 async function testConnection() {
     try {

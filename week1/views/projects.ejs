@@ -1,18 +1,25 @@
 <%- include("partials/header") %>
 
 <main class="projects-page">
+
     <section class="page-header">
         <h1><%= title %></h1>
-        <p>Explore available community service projects.</p>
+        <p>
+            Explore available community service projects
+            and find opportunities to make a difference.
+        </p>
     </section>
 
     <section class="projects-list">
+
         <% if (projects && projects.length > 0) { %>
 
             <div class="project-cards">
+
                 <% projects.forEach(project => { %>
 
                     <article class="project-card">
+
                         <h2>
                             Date:
                             <%= new Date(`${project.project_date}T00:00:00`).toLocaleDateString(
@@ -22,13 +29,14 @@
                                     month: "long",
                                     day: "numeric"
                                 }
-                            ) %>
-                            :
+                            ) %>:
                             <%= project.project_name %>
                             (<%= project.organization_name %>)
                         </h2>
 
-                        <p><%= project.description %></p>
+                        <p>
+                            <%= project.description %>
+                        </p>
 
                         <% if (project.location) { %>
                             <p>
@@ -41,9 +49,11 @@
                             <strong>Volunteers Needed:</strong>
                             <%= project.volunteers_needed %>
                         </p>
+
                     </article>
 
                 <% }) %>
+
             </div>
 
         <% } else { %>
@@ -51,7 +61,9 @@
             <p>No service projects are currently available.</p>
 
         <% } %>
+
     </section>
+
 </main>
 
 <%- include("partials/footer") %>

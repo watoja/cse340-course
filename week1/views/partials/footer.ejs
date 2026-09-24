@@ -2,50 +2,56 @@
 
 <footer class="site-footer">
 
-    <div class="footer-container">
+```
+<div class="footer-container">
 
-        <div class="footer-content">
-            <section class="footer-section">
+    <div class="footer-content">
+        <section class="footer-section">
 
-                <h2>Get Involved</h2>
-
-                <p>
-                    Find opportunities to volunteer your time,
-                    skills, and resources to support your community.
-                </p>
-
-            </section>
-
-
-            <section class="footer-section">
-
-                <h2>Our Focus</h2>
-
-                <p>
-                    Environmental service, education, community
-                    development, health, and wellness.
-                </p>
-
-            </section>
-
-        </div>
-
-
-        <div class="footer-bottom">
+            <h2>Get Involved</h2>
 
             <p>
-                &copy; <span id="currentYear"></span>
-                Service Projects-Abraham Watongola James Kaana
+                Find opportunities to volunteer your time,
+                skills, and resources to support your community.
             </p>
+
+        </section>
+
+
+        <section class="footer-section">
+
+            <h2>Our Focus</h2>
 
             <p>
-                Last Modified:
-                <span id="lastModified"></span>
+                Environmental service, education, community
+                development, health, and wellness.
             </p>
 
-        </div>
+        </section>
 
     </div>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            &copy; <span id="currentYear"></span>
+            Service Projects-Abraham Watongola James Kaana
+
+            <% if (NODE_ENV === "development") { %>
+                (Development mode)
+            <% } %>
+        </p>
+
+        <p>
+            Last Modified:
+            <span id="lastModified"></span>
+        </p>
+
+    </div>
+
+</div>
+```
 
 </footer>
 

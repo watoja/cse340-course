@@ -1,11 +1,12 @@
-import db from "./db.js";
+
+import { pool } from "./db.js";
 
 /**
  * Get all categories from the database.
  *
  * @returns {Promise<Array>} List of categories.
  */
-async function getCategories() {
+const getCategories = async () => {
     const sql = `
         SELECT
             category_id,
@@ -15,9 +16,11 @@ async function getCategories() {
         ORDER BY category_name;
     `;
 
-    const result = await db.query(sql);
+    const result = await pool.query(sql);
 
     return result.rows;
-}
+};
 
-export { getCategories };
+export {
+    getCategories
+};

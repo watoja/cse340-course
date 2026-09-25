@@ -1,0 +1,59 @@
+
+<%- include("partials/header") %>
+
+<main class="project-details-page">
+
+    <section class="page-header">
+        <h1><%= project.title %></h1>
+
+        <p>
+            Service project details
+        </p>
+    </section>
+
+    <section class="project-details">
+
+        <article class="project-card">
+
+            <h2><%= project.title %></h2>
+
+            <p>
+                <%= project.description %>
+            </p>
+
+            <div class="project-information">
+
+                <p>
+                    <strong>Date:</strong>
+                    <%= new Date(project.date).toLocaleDateString() %>
+                </p>
+
+                <p>
+                    <strong>Location:</strong>
+                    <%= project.location %>
+                </p>
+
+                <p>
+                    <strong>Organization:</strong>
+
+                    <a href="/organizations/<%= project.organization_id %>">
+                        <%= project.organization_name %>
+                    </a>
+                </p>
+
+            </div>
+
+            <p>
+                <a href="/projects">
+                    ← Back to Upcoming Service Projects
+                </a>
+            </p>
+
+        </article>
+
+    </section>
+
+</main>
+
+<%- include("partials/footer") %>
+

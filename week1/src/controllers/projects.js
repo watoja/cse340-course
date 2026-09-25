@@ -4,47 +4,40 @@ import {
     getProjectDetails
 } from "../models/projects.js";
 
+const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
 /**
- * Display the upcoming service projects.
+ * Display the upcoming service projects page.
+ *
+ * @param {Object} req Express request object.
+ * @param {Object} res Express response object.
+ * @param {Function} next Express next function.
  */
-const buildProjects = async (req, res, next) => {
+const showProjectsPage = async (req, res, next) => {
     try {
-        const projects = await getUpcomingProjects(5);
-
-        console.log("=================================");
-        console.log("UPCOMING PROJECTS DATA:");
-        console.table(projects);
-        console.log("FIRST PROJECT:");
-        console.log(projects[0]);
-        console.log("FIRST PROJECT DATE:");
-        console.log(projects[0]?.date);
-        console.log("=================================");
+        const projects = await getUpcomingProjects(
+            NUMBER_OF_UPCOMING_PROJECTS
+        );
 
         res.render("projects", {
             title: "Upcoming Service Projects",
             projects
         });
     } catch (error) {
-        console.error("Error loading upcoming service projects:", error);
         next(error);
     }
 };
 
-
 /**
- * Display the details of one service project.
+ * Display one service project's details.
+ *
+ * @param {Object} req Express request object.
+ * @param {Object} res Express response object.
+ * @param {Function} next Express next function.
  */
-const buildProjectDetails = async (req, res, next) => {
+const showProjectDetailsPage = async (req, res, next) => {
     try {
         const projectId = Number(req.params.id);
-
-        if (!Number.isInteger(projectId) || projectId <= 0) {
-            const error = new Error("Project Not Found");
-            error.status = 404;
-
-            return next(error);
-        }
 
         const project = await getProjectDetails(projectId);
 
@@ -55,19 +48,16 @@ const buildProjectDetails = async (req, res, next) => {
             return next(error);
         }
 
-        res.render("project-details", {
+        res.render("project", {
             title: project.title,
             project
         });
     } catch (error) {
-        console.error("Error loading project details:", error);
         next(error);
     }
 };
 
-
 export {
-    buildProjects,
-    buildProjectDetails
+    showProjectsPage,
+    showProjectDetailsPage
 };
-

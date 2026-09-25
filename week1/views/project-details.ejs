@@ -1,51 +1,56 @@
-```ejs
 <%- include("partials/header") %>
 
-<main class="project-details-page">
+<section class="project-details-page">
 
     <section class="page-header">
-        <h1><%= project.title %></h1>
+
+        <h1>
+            <%= project.project_name %>
+        </h1>
 
         <p>
             Service project details
         </p>
-    </section>
 
+    </section>
 
     <section class="project-details">
 
         <article class="project-card">
 
-            <h2><%= project.title %></h2>
+            <h2>
+                <%= project.project_name %>
+            </h2>
 
             <p>
                 <strong>Date:</strong>
-                <%= project.date %>
+                <%= project.project_date || "Date not available" %>
             </p>
 
             <p>
                 <strong>Location:</strong>
-                <%= project.location %>
+                <%= project.location || "Location not available" %>
             </p>
 
             <p>
                 <strong>Organization:</strong>
-                <a href="/organization/<%= project.organization_id %>">
-                    <%= project.organization_name %>
-                </a>
+
+                <%= project.organization_name %>
             </p>
 
             <div class="project-description">
+
                 <h3>Description</h3>
 
                 <p>
                     <%= project.description %>
                 </p>
+
             </div>
 
             <p>
                 <a href="/projects">
-                    ← Back to Service Projects
+                    &larr; Back to Service Projects
                 </a>
             </p>
 
@@ -53,7 +58,6 @@
 
     </section>
 
-</main>
+</section>
 
 <%- include("partials/footer") %>
-```

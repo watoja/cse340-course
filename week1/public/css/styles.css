@@ -1,44 +1,52 @@
+
 /* =========================================================
    COMMUNITY SERVICE PROJECTS - CSE340
+   Responsive Grid Layout
 ========================================================= */
+
 
 /* ---------------------------------------------------------
    1. DESIGN TOKENS & VARIABLES
 --------------------------------------------------------- */
+
 :root {
-  /* Brand Palette */
   --color-primary: #123c69;
   --color-primary-dark: #0a2544;
   --color-primary-light: #e5edf5;
   --color-accent: #f4c542;
   --color-accent-light: #ffe893;
   --color-secondary-text: #b8860b;
-  
-  /* Neutral Palette */
+
   --color-bg-main: #f4f7fb;
   --color-bg-surface: #ffffff;
   --color-bg-placeholder: #dce6f2;
   --color-text-dark: #1f2937;
   --color-text-muted: #4b5563;
 
-  /* Typography */
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  
-  /* Layout Dimensions */
+  --font-sans:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    sans-serif;
+
   --header-height: 80px;
   --container-max-width: 1150px;
-  
-  /* Edge Spacing & Inner Inset Padding */
+
   --gutter-padding: clamp(1.25rem, 4vw, 2.5rem);
   --card-inner-padding: clamp(1.25rem, 3vw, 1.75rem);
 
-  /* Elevation & Motion */
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 6px 20px rgba(18, 60, 105, 0.08);
   --shadow-lg: 0 12px 32px rgba(18, 60, 105, 0.18);
   --header-shadow: 0 8px 32px rgba(10, 37, 68, 0.25);
-  
+
   --transition-fast: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-pill: 9999px;
@@ -46,8 +54,9 @@
 
 
 /* ---------------------------------------------------------
-   2. MODERN RESET & BASE STYLES
+   2. RESET & BASE STYLES
 --------------------------------------------------------- */
+
 *,
 *::before,
 *::after {
@@ -82,10 +91,15 @@ button {
   font: inherit;
 }
 
+a {
+  color: inherit;
+}
+
 
 /* ---------------------------------------------------------
    3. ACCESSIBILITY & FOCUS STATES
 --------------------------------------------------------- */
+
 :focus-visible {
   outline: 3px solid var(--color-accent);
   outline-offset: 3px;
@@ -94,17 +108,19 @@ button {
 
 
 /* ---------------------------------------------------------
-   4. LAYOUT CONTAINERS & SIDE PADDING
+   4. GLOBAL LAYOUT CONTAINERS
 --------------------------------------------------------- */
+
 .header-container,
-.main-content {
+.main-content,
+main {
   width: 100%;
   max-width: var(--container-max-width);
   margin-inline: auto;
   padding-inline: var(--gutter-padding);
 }
 
-.main-content {
+main {
   flex: 1 0 auto;
   padding-top: calc(var(--header-height) + 2rem);
   padding-bottom: 4rem;
@@ -112,8 +128,9 @@ button {
 
 
 /* ---------------------------------------------------------
-   5. FIXED HEADER & NAVIGATION
+   5. FIXED HEADER
 --------------------------------------------------------- */
+
 .site-header {
   position: fixed;
   top: 0;
@@ -135,7 +152,11 @@ button {
   justify-content: space-between;
 }
 
-/* --- Brand Logo --- */
+
+/* ---------------------------------------------------------
+   6. SITE LOGO
+--------------------------------------------------------- */
+
 .site-logo {
   display: inline-flex;
   align-items: center;
@@ -159,7 +180,11 @@ button {
   transform: translateY(-1px);
 }
 
-/* --- Mobile Hamburger Trigger --- */
+
+/* ---------------------------------------------------------
+   7. HAMBURGER
+--------------------------------------------------------- */
+
 .hamburger {
   display: flex;
   align-items: center;
@@ -182,7 +207,11 @@ button {
   transform: scale(1.04);
 }
 
-/* --- Mobile Navigation Drawer --- */
+
+/* ---------------------------------------------------------
+   8. NAVIGATION
+--------------------------------------------------------- */
+
 .navigation {
   display: none;
   position: absolute;
@@ -226,8 +255,9 @@ button {
 
 
 /* ---------------------------------------------------------
-   6. HERO SECTION
+   9. HERO
 --------------------------------------------------------- */
+
 .hero {
   display: grid;
   grid-template-columns: 1fr;
@@ -243,9 +273,7 @@ button {
 
 .hero-image {
   width: 100%;
-  max-width: 100%;
   height: 220px;
-  max-height: 260px;
   background-color: var(--color-bg-placeholder);
   border-radius: var(--radius-sm);
   padding: 0.4rem;
@@ -254,7 +282,6 @@ button {
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(0, 0, 0, 0.05);
-  box-sizing: border-box;
 }
 
 .hero-image img {
@@ -294,32 +321,8 @@ button {
 
 
 /* ---------------------------------------------------------
-   7. BUTTONS & UI ELEMENTS
+   10. PAGE BANNERS
 --------------------------------------------------------- */
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-start;
-  padding: 0.7rem 1.4rem;
-  background-color: var(--color-accent);
-  color: var(--color-primary);
-  border-radius: var(--radius-pill);
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 0.9rem;
-  letter-spacing: 0.01em;
-  transition: all var(--transition-fast);
-  box-shadow: 0 4px 10px rgba(244, 197, 66, 0.25);
-}
-
-.button:hover,
-.button:focus-visible {
-  background-color: var(--color-primary);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
 
 .page-banner {
   background-color: var(--color-bg-surface);
@@ -360,25 +363,84 @@ button {
 
 
 /* ---------------------------------------------------------
-   8. STANDARD CARDS & GRID LAYOUTS
+   11. BUTTONS
 --------------------------------------------------------- */
-.cards {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.75rem;
-  padding-bottom: 1rem;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  padding: 0.7rem 1.4rem;
+  background-color: var(--color-accent);
+  color: var(--color-primary);
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 10px rgba(244, 197, 66, 0.25);
 }
+
+.button:hover,
+.button:focus-visible {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+
+/* ---------------------------------------------------------
+   12. UNIVERSAL GRID SYSTEM
+--------------------------------------------------------- */
+
+/*
+   These containers are intentionally grouped together.
+
+   This means the grid works even if the EJS files use:
+   .cards
+   .category-grid
+   .category-cards
+   .organization-cards
+   .project-cards
+   .projects-list
+*/
+
+.cards,
+.category-grid,
+.category-cards,
+.organization-cards,
+.project-cards,
+.projects-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+  width: 100%;
+  align-items: stretch;
+  padding-bottom: 2rem;
+}
+
+
+/* ---------------------------------------------------------
+   13. STANDARD CARD
+--------------------------------------------------------- */
 
 .card {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  width: 100%;
+  height: 100%;
   background-color: var(--color-bg-surface);
   border-radius: var(--radius-md);
   padding: var(--card-inner-padding);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(18, 60, 105, 0.05);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -390,7 +452,6 @@ button {
 
 .card-image {
   width: 100%;
-  max-width: 100%;
   height: 190px;
   background-color: var(--color-bg-placeholder);
   border-radius: var(--radius-sm);
@@ -401,7 +462,6 @@ button {
   justify-content: center;
   margin-bottom: 1rem;
   border: 1px solid rgba(0, 0, 0, 0.04);
-  box-sizing: border-box;
 }
 
 .card-image img {
@@ -451,46 +511,11 @@ button {
   color: #ffffff;
 }
 
-.project-category {
-  display: inline-block;
-  align-self: flex-start;
-  margin-bottom: 0.6rem;
-  padding: 0.35rem 0.75rem;
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  border-radius: var(--radius-pill);
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
 
 /* ---------------------------------------------------------
-   9. CATEGORIES PAGE (PLACEHOLDER & EDGE GUARDING)
+   14. CATEGORY CARDS
 --------------------------------------------------------- */
-.category-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.75rem;
-  width: 100%;
-  padding-bottom: 2rem;
-}
 
-/* ---------------------------------------------------------
-   CATEGORY, ORGANIZATION & PROJECT GRIDS
-   These classes match the EJS page markup.
---------------------------------------------------------- */
-.category-cards,
-.organization-cards,
-.project-cards {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.75rem;
-  width: 100%;
-  align-items: stretch;
-  padding-bottom: 2rem;
-}
-
-/* Category Cards */
 .category-card {
   display: flex;
   flex-direction: column;
@@ -503,7 +528,9 @@ button {
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(18, 60, 105, 0.05);
   text-align: center;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .category-card:hover {
@@ -511,141 +538,12 @@ button {
   box-shadow: var(--shadow-md);
 }
 
-/* Organization Cards */
-.organization-card {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-bg-surface);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(18, 60, 105, 0.05);
-  overflow: hidden;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.organization-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-/* Organization Image */
-.organization-image {
-  width: 100%;
-  height: 210px;
-  background-color: var(--color-bg-placeholder);
-  padding: 0.4rem;
-  overflow: hidden;
-  border-bottom: 1px solid rgba(18, 60, 105, 0.05);
-}
-
-.organization-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: calc(var(--radius-sm) - 2px);
-}
-
-/* Organization Content */
-.organization-content {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: var(--card-inner-padding);
-}
-
-.organization-content h2 {
-  margin-bottom: 0.75rem;
-  color: var(--color-primary);
-  font-size: 1.3rem;
-  line-height: 1.3;
-}
-
-.organization-content p {
-  margin-bottom: 0.75rem;
-  color: var(--color-text-muted);
-  font-size: 0.92rem;
-  line-height: 1.5;
-}
-
-.organization-content p:last-child {
-  margin-bottom: 0;
-}
-
-.organization-content strong {
-  color: var(--color-text-dark);
-}
-
-/* Organization Website Link */
-.organization-content a {
-  color: var(--color-primary);
-  font-weight: 700;
-  text-decoration: underline;
-}
-
-.organization-content a:hover,
-.organization-content a:focus-visible {
-  color: var(--color-secondary-text);
-}
-
-
-/* ---------------------------------------------------------
-   PROJECT CARDS
---------------------------------------------------------- */
-.project-card {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-bg-surface);
-  border-radius: var(--radius-md);
-  padding: var(--card-inner-padding);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(18, 60, 105, 0.05);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.project-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-.project-card h2 {
-  margin-bottom: 0.85rem;
-  color: var(--color-primary);
-  font-size: 1.2rem;
-  line-height: 1.4;
-}
-
-.project-card p {
-  margin-bottom: 0.75rem;
-  color: var(--color-text-muted);
-  font-size: 0.92rem;
-  line-height: 1.5;
-}
-
-.project-card p:last-child {
-  margin-bottom: 0;
-}
-
-.project-card strong {
-  color: var(--color-text-dark);
-}
-
-
-/* ---------------------------------------------------------
-   CATEGORY IMAGE / PLACEHOLDER CONTAINERS
---------------------------------------------------------- */
 .category-image,
 .category-card .card-image,
 .category-card .placeholder {
   width: 100%;
-  max-width: 100%;
   height: 180px;
-  margin: 0 auto 1.25rem auto;
+  margin: 0 auto 1.25rem;
   padding: 0.4rem;
   background-color: var(--color-bg-placeholder);
   border-radius: var(--radius-sm);
@@ -654,7 +552,6 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
 }
 
 .category-image img,
@@ -701,7 +598,198 @@ button {
   flex-grow: 1;
 }
 
-/* Category Detail Lists & Badges */
+
+/* ---------------------------------------------------------
+   15. ORGANIZATION CARDS
+--------------------------------------------------------- */
+
+.organization-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(18, 60, 105, 0.05);
+  overflow: hidden;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.organization-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.organization-image {
+  width: 100%;
+  height: 210px;
+  background-color: var(--color-bg-placeholder);
+  padding: 0.4rem;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(18, 60, 105, 0.05);
+}
+
+.organization-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: calc(var(--radius-sm) - 2px);
+}
+
+.organization-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--card-inner-padding);
+}
+
+.organization-content h2 {
+  margin-bottom: 0.75rem;
+  color: var(--color-primary);
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+
+.organization-content p {
+  margin-bottom: 0.75rem;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.organization-content p:last-child {
+  margin-bottom: 0;
+}
+
+.organization-content strong {
+  color: var(--color-text-dark);
+}
+
+.organization-content a {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.organization-content a:hover,
+.organization-content a:focus-visible {
+  color: var(--color-secondary-text);
+}
+
+
+/* ---------------------------------------------------------
+   16. PROJECT CARDS
+--------------------------------------------------------- */
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-md);
+  padding: var(--card-inner-padding);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(18, 60, 105, 0.05);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.project-card h2 {
+  margin-bottom: 0.85rem;
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+
+.project-card h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.project-card h2 a:hover,
+.project-card h2 a:focus-visible {
+  color: var(--color-secondary-text);
+  text-decoration: underline;
+}
+
+.project-card p {
+  margin-bottom: 0.75rem;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.project-card p:last-child {
+  margin-bottom: 0;
+}
+
+.project-card strong {
+  color: var(--color-text-dark);
+}
+
+.project-card a {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.project-card a:hover,
+.project-card a:focus-visible {
+  color: var(--color-secondary-text);
+}
+
+
+/* ---------------------------------------------------------
+   17. PROJECT DETAILS PAGE
+--------------------------------------------------------- */
+
+/*
+   The listing page uses a grid.
+
+   The individual project page should remain one
+   readable detailed card rather than a multi-column grid.
+*/
+
+.project-details-page {
+  width: 100%;
+}
+
+.project-details {
+  width: 100%;
+  max-width: 850px;
+  margin-inline: auto;
+}
+
+.project-details .project-card {
+  min-height: auto;
+}
+
+.project-information {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  background-color: var(--color-bg-main);
+  border-radius: var(--radius-sm);
+}
+
+
+/* ---------------------------------------------------------
+   18. CATEGORY LISTS
+--------------------------------------------------------- */
+
 .category-list,
 .category-items {
   list-style: none;
@@ -724,8 +812,9 @@ button {
 
 
 /* ---------------------------------------------------------
-   10. FOOTER
+   19. FOOTER
 --------------------------------------------------------- */
+
 footer {
   width: 100%;
   min-height: 70px;
@@ -747,39 +836,48 @@ footer p {
 
 
 /* ---------------------------------------------------------
-   11. MEDIA QUERIES & RESPONSIVE DESIGNS
+   20. TABLET
+   600px AND ABOVE
 --------------------------------------------------------- */
 
-/* Tablet Viewport (≥ 600px) */
 @media screen and (min-width: 600px) {
-  .cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
 
-  .category-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  /*
+     All main listing grids become two columns.
+  */
 
-  /* Category, Organization and Project Grids */
+  .cards,
+  .category-grid,
   .category-cards,
   .organization-cards,
-  .project-cards {
+  .project-cards,
+  .projects-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-information {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 
-/* Desktop Viewport (≥ 768px) */
+/* ---------------------------------------------------------
+   21. DESKTOP
+   768px AND ABOVE
+--------------------------------------------------------- */
+
 @media screen and (min-width: 768px) {
+
   :root {
     --header-height: 84px;
   }
 
+  /* Hide hamburger on desktop */
   .hamburger {
     display: none;
   }
 
-  /* Desktop Header Navigation */
+  /* Desktop navigation */
   .navigation {
     position: static;
     display: flex;
@@ -824,7 +922,7 @@ footer p {
     border-color: var(--color-accent);
   }
 
-  /* Desktop Layout Grids */
+  /* Hero becomes two columns */
   .hero {
     grid-template-columns: 1fr 1.1fr;
     gap: 2rem;
@@ -835,35 +933,44 @@ footer p {
     max-height: 320px;
   }
 
-  .cards {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .category-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-  }
-
-  /* Three-Column Desktop Grids */
+  /* Three-column listing grids */
+  .cards,
+  .category-grid,
   .category-cards,
   .organization-cards,
-  .project-cards {
+  .project-cards,
+  .projects-list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.75rem;
   }
 }
 
 
-/* Large Desktop (≥ 1100px) */
+/* ---------------------------------------------------------
+   22. LARGE DESKTOP
+   1100px AND ABOVE
+--------------------------------------------------------- */
+
 @media screen and (min-width: 1100px) {
-  .category-grid {
-    grid-template-columns: repeat(3, 1fr);
+
+  .cards,
+  .category-grid,
+  .category-cards,
+  .organization-cards,
+  .project-cards,
+  .projects-list {
+    gap: 2rem;
   }
 }
 
 
-/* Small Mobile Devices (≤ 400px) */
+/* ---------------------------------------------------------
+   23. SMALL MOBILE
+   400px AND BELOW
+--------------------------------------------------------- */
+
 @media screen and (max-width: 400px) {
+
   :root {
     --header-height: 72px;
   }
@@ -887,15 +994,23 @@ footer p {
     padding: 1rem;
   }
 
-  /* Keep all page grids single-column on very small screens */
-  .category-cards,
-  .organization-cards,
-  .project-cards {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
   .organization-image {
     height: 200px;
   }
+
+  /*
+     Keep listing grids at one column on very
+     small screens.
+  */
+
+  .cards,
+  .category-grid,
+  .category-cards,
+  .organization-cards,
+  .project-cards,
+  .projects-list {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
 }
+

@@ -1,3 +1,4 @@
+
 import "dotenv/config";
 import express from "express";
 import path from "path";
@@ -6,7 +7,12 @@ import { fileURLToPath } from "url";
 import { testConnection } from "./src/models/db.js";
 import { getCategories } from "./src/models/categories.js";
 import { getAllOrganizations } from "./src/models/organizations.js";
-import { getAllProjects } from "./src/models/projects.js";
+
+import {
+    showProjectsPage,
+    showProjectDetailsPage
+} from "./src/controllers/projects.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -98,24 +104,15 @@ app.get("/organizations", async (req, res, next) => {
 
 
 /**
- * Service Projects page
+ * Upcoming Service Projects page
  */
-app.get("/projects", async (req, res, next) => {
-    try {
-        const projects = await getAllProjects();
+app.get("/projects", showProjectsPage);
 
-        console.log("Service projects retrieved from database:");
-        console.table(projects);
 
-        res.render("projects", {
-            title: "Service Projects",
-            projects
-        });
-    } catch (error) {
-        console.error("Error loading service projects:", error);
-        next(error);
-    }
-});
+/**
+ * Individual Service Project details page
+ */
+app.get("/project/:id", showProjectDetailsPage);
 
 
 /**

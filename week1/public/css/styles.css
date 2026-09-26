@@ -398,6 +398,8 @@ main {
 
 /* Base grid display for listing containers across projects, organization, and categories */
 .projects-grid,
+.hero,
+.cards,
 .organization-grid,
 .categories-grid,
 #projects-grid,

@@ -2,47 +2,49 @@
 
 <main class="categories-page">
 
-    <section class="page-header">
-        <h1><%= title %></h1>
+
+<section class="page-header">
+    <h1><%= title %></h1>
+
+    <p>
+        Explore our service project categories.
+    </p>
+</section>
+
+<section class="categories-grid">
+
+    <% if (categories.length > 0) { %>
+
+        <% categories.forEach(category => { %>
+
+            <article class="category-card">
+
+                <h2>
+                    <a href="/category/<%= category.category_id %>">
+                        <%= category.category_name %>
+                    </a>
+                </h2>
+
+                <% if (category.description) { %>
+                    <p>
+                        <%= category.description %>
+                    </p>
+                <% } %>
+
+            </article>
+
+        <% }); %>
+
+    <% } else { %>
+
         <p>
-            Explore the different categories of service projects
-            available in the community.
+            There are currently no service project categories.
         </p>
-    </section>
 
-    <section class="category-list">
+    <% } %>
 
-        <% if (categories && categories.length > 0) { %>
+</section>
 
-            <div class="category-cards">
-
-                <% categories.forEach(category => { %>
-
-                    <article class="category-card">
-
-                        <h2>
-                            <%= category.category_name %>
-                        </h2>
-
-                        <% if (category.description) { %>
-                            <p>
-                                <%= category.description %>
-                            </p>
-                        <% } %>
-
-                    </article>
-
-                <% }) %>
-
-            </div>
-
-        <% } else { %>
-
-            <p>No categories are currently available.</p>
-
-        <% } %>
-
-    </section>
 
 </main>
 

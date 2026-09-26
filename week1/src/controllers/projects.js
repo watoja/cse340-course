@@ -1,63 +1,91 @@
-
 import {
-    getUpcomingProjects,
-    getProjectDetails
+getAllProjects,
+getUpcomingProjects,
+getProjectDetails,
+getCategoriesByProject
 } from "../models/projects.js";
 
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
 /**
- * Display the upcoming service projects page.
- *
- * @param {Object} req Express request object.
- * @param {Object} res Express response object.
- * @param {Function} next Express next function.
- */
-const showProjectsPage = async (req, res, next) => {
-    try {
-        const projects = await getUpcomingProjects(
-            NUMBER_OF_UPCOMING_PROJECTS
-        );
 
-        res.render("projects", {
-            title: "Upcoming Service Projects",
-            projects
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+* Display all service projects.
+  */
+  const showProjectsPage = async (req, res, next) => {
+  try {
+  const projects = await getAllProjects();
+
+  
+   res.render("projects", {
+       title: "Service Projects",
+       projects
+   });
+  
+
+  } catch (error) {
+  console.error(
+  "Error loading service projects:",
+  error
+  );
+
+  
+   next(error);
+  
+
+  }
+  };
 
 /**
- * Display one service project's details.
- *
- * @param {Object} req Express request object.
- * @param {Object} res Express response object.
- * @param {Function} next Express next function.
- */
-const showProjectDetailsPage = async (req, res, next) => {
-    try {
-        const projectId = Number(req.params.id);
 
-        const project = await getProjectDetails(projectId);
+* Display one service project's details.
+  */
+  const showProjectDetailsPage = async (req, res, next) => {
+  try {
+  const projectId = Number(req.params.id);
 
-        if (!project) {
-            const error = new Error("Project Not Found");
-            error.status = 404;
+  
+   if (!Number.isInteger(projectId) || projectId <= 0) {
+       const error = new Error("Project Not Found");
 
-            return next(error);
-        }
+       error.status = 404;
 
-        res.render("project", {
-            title: project.title,
-            project
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+       return next(error);
+   }
+
+   const project = await getProjectDetails(projectId);
+
+   if (!project) {
+       const error = new Error("Project Not Found");
+
+       error.status = 404;
+
+       return next(error);
+   }
+
+   const categories =
+       await getCategoriesByProject(projectId);
+
+   res.render("project", {
+       title: "Project Details",
+       project,
+       categories
+   });
+  
+
+  } catch (error) {
+  console.error(
+  "Error loading project details:",
+  error
+  );
+
+  
+   next(error);
+  
+
+  }
+  };
 
 export {
-    showProjectsPage,
-    showProjectDetailsPage
+showProjectsPage,
+showProjectDetailsPage
 };

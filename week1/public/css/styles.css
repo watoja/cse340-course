@@ -396,30 +396,35 @@ main {
    12. UNIVERSAL GRID SYSTEM
 --------------------------------------------------------- */
 
-/*
-   These containers are intentionally grouped together.
-
-   This means the grid works even if the EJS files use:
-   .cards
-   .category-grid
-   .category-cards
-   .organization-cards
-   .project-cards
-   .projects-list
-*/
-
-.cards,
-.category-grid,
-.category-cards,
-.organization-cards,
-.project-cards,
-.projects-list {
+/* Base grid display for listing containers across projects, organization, and categories */
+.projects-grid,
+.organization-grid,
+.categories-grid,
+#projects-grid,
+#organization-grid,
+#categories-grid,
+.projects-container,
+.organization-container,
+.categories-container {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.75rem;
-  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
   align-items: stretch;
-  padding-bottom: 2rem;
+}
+
+/* Optional responsive adjustments for smaller screen sizes */
+@media (max-width: 600px) {
+  .projects-grid,
+  .organization-grid,
+  .categories-grid,
+  #projects-grid,
+  #organization-grid,
+  #categories-grid,
+  .projects-container,
+  .organization-container,
+  .categories-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 

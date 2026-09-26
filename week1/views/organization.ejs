@@ -1,0 +1,102 @@
+<%- include("partials/header") %>
+
+<main class="organization-details-page">
+
+```
+<section class="page-header">
+    <h1><%= title %></h1>
+</section>
+
+<section class="organization-details">
+
+    <article class="organization-card">
+
+        <div class="organization-image">
+            <img
+                src="/images/<%= organizationDetails.image %>"
+                alt="<%= organizationDetails.organization_name %> logo">
+        </div>
+
+        <div class="organization-information">
+
+            <h2>
+                <%= organizationDetails.organization_name %>
+            </h2>
+
+            <p>
+                <strong>Description:</strong>
+                <%= organizationDetails.description %>
+            </p>
+
+            <% if (organizationDetails.contact_email) { %>
+                <p>
+                    <strong>Email:</strong>
+                    <%= organizationDetails.contact_email %>
+                </p>
+            <% } %>
+
+            <% if (organizationDetails.phone) { %>
+                <p>
+                    <strong>Phone:</strong>
+                    <%= organizationDetails.phone %>
+                </p>
+            <% } %>
+
+            <% if (organizationDetails.location) { %>
+                <p>
+                    <strong>Location:</strong>
+                    <%= organizationDetails.location %>
+                </p>
+            <% } %>
+
+            <% if (organizationDetails.website) { %>
+                <p>
+                    <strong>Website:</strong>
+                    <a
+                        href="<%= organizationDetails.website %>"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Visit Organization Website
+                    </a>
+                </p>
+            <% } %>
+
+        </div>
+
+    </article>
+
+</section>
+
+<section class="organization-projects">
+
+    <h2>Service Projects</h2>
+
+    <% if (projects.length > 0) { %>
+
+        <ul>
+            <% projects.forEach(project => { %>
+
+                <li>
+                    <a href="/project/<%= project.project_id %>">
+                        <%= project.title %>
+                    </a>
+                </li>
+
+            <% }); %>
+        </ul>
+
+    <% } else { %>
+
+        <p>
+            No service projects are currently associated
+            with this organization.
+        </p>
+
+    <% } %>
+
+</section>
+```
+
+</main>
+
+<%- include("partials/footer") %>

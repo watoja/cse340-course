@@ -1,23 +1,25 @@
-
 <%- include("partials/header") %>
 
 <main class="projects-page">
 
-    <section class="page-header">
-        <h1><%= title %></h1>
 
-        <p>
-            Explore the next five upcoming service projects.
-        </p>
-    </section>
+<section class="page-header">
+    <h1><%= title %></h1>
 
-    <section class="projects-list">
+    <p>
+        Here are the next upcoming service projects.
+    </p>
+</section>
 
-        <% if (projects.length > 0) { %>
+<section class="projects-grid">
 
-            <% projects.forEach((project) => { %>
+    <% if (projects.length > 0) { %>
 
-                <article class="project-card">
+        <% projects.forEach(project => { %>
+
+            <article class="project-card">
+
+                <div class="project-content">
 
                     <h2>
                         <a href="/project/<%= project.project_id %>">
@@ -31,37 +33,41 @@
 
                     <p>
                         <strong>Date:</strong>
-                        <%= new Date(project.date).toLocaleDateString() %>
+                        <%= project.date %>
                     </p>
 
-                    <p>
-                        <strong>Location:</strong>
-                        <%= project.location %>
-                    </p>
+                    <% if (project.location) { %>
+                        <p>
+                            <strong>Location:</strong>
+                            <%= project.location %>
+                        </p>
+                    <% } %>
 
                     <p>
-                        <strong>Organization:</strong>
-
-                        <a href="/organizations/<%= project.organization_id %>">
+                        <strong>Partner Organization:</strong>
+                        <a
+                            href="/organization/<%= project.organization_id %>">
                             <%= project.organization_name %>
                         </a>
                     </p>
 
-                </article>
+                </div>
 
-            <% }); %>
+            </article>
 
-        <% } else { %>
+        <% }); %>
 
-            <p>
-                There are currently no upcoming service projects.
-            </p>
+    <% } else { %>
 
-        <% } %>
+        <p>
+            There are currently no upcoming service projects.
+        </p>
 
-    </section>
+    <% } %>
+
+</section>
+
 
 </main>
 
 <%- include("partials/footer") %>
-

@@ -1,89 +1,245 @@
-import "dotenv/config";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+import session from "express-session";
+import flash from "connect-flash";
 
 import routes from "./src/routes.js";
-import { testConnection } from "./src/models/db.js";
+import {
+    testConnection
+} from "./src/models/db.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
+dotenv.config();
+
 
 const app = express();
 
-const PORT = process.env.PORT || 5500;
-const NODE_ENV = process.env.NODE_ENV || "development";
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+/* ---------------------------------------------------------
+   DIRECTORY SETTINGS
+--------------------------------------------------------- */
 
-app.use((req, res, next) => {
-if (NODE_ENV === "development") {
-console.log(`${req.method} ${req.url}`);
-}
+const __filename =
+    fileURLToPath(import.meta.url);
 
-
-next();
+const __dirname =
+    path.dirname(__filename);
 
 
-});
+/* ---------------------------------------------------------
+   PORT
+--------------------------------------------------------- */
 
-app.use((req, res, next) => {
-res.locals.NODE_ENV = NODE_ENV;
-next();
-});
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
-
-app.use(routes);
-
-app.use((req, res, next) => {
-const error = new Error("Page Not Found");
+const PORT =
+    process.env.PORT || 5500;
 
 
-error.status = 404;
+/* ---------------------------------------------------------
+   VIEW ENGINE
+--------------------------------------------------------- */
 
-next(error);
+app.set(
+    "view engine",
+    "ejs"
+);
+
+app.set(
+    "views",
+    path.join(
+        __dirname,
+        "views"
+    )
+);
 
 
-});
+/* ---------------------------------------------------------
+   REQUEST BODY
+--------------------------------------------------------- */
 
-app.use((error, req, res, next) => {
-console.error("Error occurred:", error.message);
-console.error("Stack trace:", error.stack);
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+);
+
+app.use(
+    express.json()
+);
 
 
-const status = error.status || 500;
-const template = status === 404 ? "404" : "500";
+/* ---------------------------------------------------------
+   STATIC FILES
+--------------------------------------------------------- */
 
-const context = {
-    title: status === 404 ? "Page Not Found" : "Server Error",
-    error: error.message,
-    stack: error.stack
+app.use(
+    express.static(
+        path.join(
+            __dirname,
+            "public"
+        )
+    )
+);
+
+
+/* ---------------------------------------------------------
+   SESSION
+--------------------------------------------------------- */
+
+app.use(
+    session({
+        secret:
+            process.env.SESSION_SECRET ||
+            "development-secret",
+
+        resave: false,
+
+        saveUninitialized: false,
+
+        cookie: {
+            secure: false,
+            maxAge:
+                1000 * 60 * 60
+        }
+    })
+);
+
+
+/* ---------------------------------------------------------
+   FLASH MESSAGES
+--------------------------------------------------------- */
+
+app.use(
+    flash()
+);
+
+
+/* ---------------------------------------------------------
+   LOCAL VARIABLES
+--------------------------------------------------------- */
+
+app.use(
+    (req, res, next) => {
+
+        res.locals.NODE_ENV =
+            process.env.NODE_ENV ||
+            "development";
+
+        res.locals.success =
+            req.flash("success");
+
+        res.locals.error =
+            req.flash("error");
+
+        next();
+    }
+);
+
+
+/* ---------------------------------------------------------
+   REQUEST LOGGER
+--------------------------------------------------------- */
+
+app.use(
+    (req, res, next) => {
+
+        console.log(
+            `REQUEST: ${req.method} ${req.originalUrl}`
+        );
+
+        next();
+    }
+);
+
+
+/* ---------------------------------------------------------
+   APPLICATION ROUTES
+--------------------------------------------------------- */
+
+app.use(
+    "/",
+    routes
+);
+
+
+/* ---------------------------------------------------------
+   404 ERROR
+--------------------------------------------------------- */
+
+app.use(
+    (req, res) => {
+
+        res.status(404).render(
+            "errors/error",
+            {
+                title: "Page Not Found",
+
+                error: {
+                    message:
+                        "The page you are looking for could not be found."
+                }
+            }
+        );
+    }
+);
+
+
+/* ---------------------------------------------------------
+   500 ERROR
+--------------------------------------------------------- */
+
+app.use(
+    (err, req, res, next) => {
+
+        console.error(
+            "SERVER ERROR:",
+            err
+        );
+
+        res.status(500).render(
+            "errors/error",
+            {
+                title: "Server Error",
+
+                error: err
+            }
+        );
+    }
+);
+
+
+/* ---------------------------------------------------------
+   START SERVER
+--------------------------------------------------------- */
+
+const startServer = async () => {
+
+    try {
+
+        await testConnection();
+
+        app.listen(
+            PORT,
+            () => {
+
+                console.log(
+                    `Server is running at http://localhost:${PORT}`
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Unable to start server:",
+            error.message
+        );
+
+        process.exit(1);
+    }
 };
 
-res.status(status).render(`errors/${template}`, context);
 
-
-});
-
-app.listen(PORT, async () => {
-try {
-await testConnection();
-
-
-    console.log(
-        `Server is running at http://localhost:${PORT}`
-    );
-
-    console.log(`Environment: ${NODE_ENV}`);
-} catch (error) {
-    console.error(
-        "Error connecting to the database:",
-        error.message
-    );
-}
-
-
-});
+startServer();

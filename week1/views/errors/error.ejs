@@ -1,0 +1,35 @@
+<%- include("../partials/header") %>
+
+<main class="error-page">
+
+    <div class="main-content">
+
+        <section class="page-header">
+
+            <h1><%= title %></h1>
+
+            <p>
+                Sorry, something went wrong while processing your request.
+            </p>
+
+        </section>
+
+        <section class="error-content">
+
+            <% if (error && error.message) { %>
+                <p>
+                    <%= error.message %>
+                </p>
+            <% } %>
+
+            <a href="/" class="button">
+                Return Home
+            </a>
+
+        </section>
+
+    </div>
+
+</main>
+
+<%- include("../partials/footer") %>

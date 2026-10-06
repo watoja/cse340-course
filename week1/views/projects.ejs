@@ -1,73 +1,162 @@
 <%- include("partials/header") %>
 
-<main class="projects-page">
+<main>
+    <div class="main-content">
+
+        <section class="page-header">
+
+            <h1>
+                Upcoming Service Projects
+            </h1>
+
+            <p>
+                Discover upcoming opportunities to serve in your community.
+            </p>
+
+            <div class="form-actions">
+
+                <a
+                    href="/project/create"
+                    class="button btn-primary"
+                >
+                    Add Project
+                </a>
+
+            </div>
+
+        </section>
 
 
-<section class="page-header">
-    <h1><%= title %></h1>
+        <% if (success && success.length > 0) { %>
 
-    <p>
-        Here are the next upcoming service projects.
-    </p>
-</section>
+            <div
+                class="success-message"
+                role="status"
+            >
 
-<section class="projects-grid">
-
-    <% if (projects.length > 0) { %>
-
-        <% projects.forEach(project => { %>
-
-            <article class="project-card">
-
-                <div class="project-content">
-
-                    <h2>
-                        <a href="/project/<%= project.project_id %>">
-                            <%= project.title %>
-                        </a>
-                    </h2>
-
-                    <p>
-                        <%= project.description %>
-                    </p>
-
-                    <p>
-                        <strong>Date:</strong>
-                        <%= project.date %>
-                    </p>
-
-                    <% if (project.location) { %>
-                        <p>
-                            <strong>Location:</strong>
-                            <%= project.location %>
-                        </p>
-                    <% } %>
+                <% success.forEach((message) => { %>
 
                     <p>
-                        <strong>Partner Organization:</strong>
-                        <a
-                            href="/organization/<%= project.organization_id %>">
-                            <%= project.organization_name %>
-                        </a>
+                        <%= message %>
                     </p>
 
-                </div>
+                <% }); %>
 
-            </article>
+            </div>
 
-        <% }); %>
-
-    <% } else { %>
-
-        <p>
-            There are currently no upcoming service projects.
-        </p>
-
-    <% } %>
-
-</section>
+        <% } %>
 
 
+        <% if (projects && projects.length > 0) { %>
+
+            <section
+                class="projects-grid"
+                aria-label="Upcoming service projects"
+            >
+
+                <% projects.forEach((project) => { %>
+
+                    <article class="project-card">
+
+                        <div class="project-content">
+
+                            <h2>
+
+                                <a
+                                    href="/project/<%= project.project_id %>"
+                                    class="card-link"
+                                >
+                                    <%= project.project_name %>
+                                </a>
+
+                            </h2>
+
+
+                            <p>
+                                <%= project.description %>
+                            </p>
+
+
+                            <p>
+                                <strong>
+                                    Date:
+                                </strong>
+
+                                <%= new Date(project.project_date).toLocaleDateString() %>
+                            </p>
+
+
+                            <p>
+                                <strong>
+                                    Location:
+                                </strong>
+
+                                <%= project.location %>
+                            </p>
+
+
+                            <p>
+                                <strong>
+                                    Volunteers Needed:
+                                </strong>
+
+                                <%= project.volunteers_needed %>
+                            </p>
+
+
+                            <% if (project.organization_name) { %>
+
+                                <p>
+                                    <strong>
+                                        Organization:
+                                    </strong>
+
+                                    <a
+                                        href="/organization/<%= project.organization_id %>"
+                                    >
+                                        <%= project.organization_name %>
+                                    </a>
+                                </p>
+
+                            <% } %>
+
+
+                            <div class="form-actions">
+
+                                <a
+                                    href="/project/<%= project.project_id %>"
+                                    class="button"
+                                >
+                                    View Details
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                <% }); %>
+
+            </section>
+
+        <% } else { %>
+
+            <section class="card">
+
+                <h2>
+                    No Upcoming Projects
+                </h2>
+
+                <p>
+                    There are currently no upcoming service projects.
+                </p>
+
+            </section>
+
+        <% } %>
+
+    </div>
 </main>
 
 <%- include("partials/footer") %>

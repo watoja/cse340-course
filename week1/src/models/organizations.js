@@ -1,54 +1,193 @@
-import { pool } from "./db.js";
+import db from "./db.js";
 
-/**
 
-* Get all organizations from the database.
-  */
-  const getAllOrganizations = async () => {
-  const sql = `      SELECT
-           organization_id,
-           organization_name,
-           description,
-           website,
-           contact_email,
-           phone,
-           location,
-           image
-       FROM organization
-       ORDER BY organization_name ASC;
-   `;
+/* =========================================================
+   GET ALL ORGANIZATIONS
+========================================================= */
 
-  const result = await pool.query(sql);
+const getAllOrganizations = async () => {
+    const sql = `
+        SELECT
+            organization_id,
+            organization_name,
+            description,
+            website,
+            contact_email,
+            phone,
+            location,
+            image
+        FROM organization
+        ORDER BY organization_name;
+    `;
 
-  return result.rows;
-  };
+    const result = await db.query(sql);
 
-/**
+    return result.rows;
+};
 
-* Get one organization by ID.
-*
-* @param {number} organizationId - Organization ID.
-  */
-  const getOrganizationDetails = async (organizationId) => {
-  const sql = `      SELECT
-           organization_id,
-           organization_name,
-           description,
-           website,
-           contact_email,
-           phone,
-           location,
-           image
-       FROM organization
-       WHERE organization_id = $1;
-   `;
 
-  const result = await pool.query(sql, [organizationId]);
+/* =========================================================
+   GET ORGANIZATION BY ID
+========================================================= */
 
-  return result.rows.length > 0 ? result.rows[0] : null;
-  };
+const getOrganizationById = async (
+    organizationId
+) => {
+    const sql = `
+        SELECT
+            organization_id,
+            organization_name,
+            description,
+            website,
+            contact_email,
+            phone,
+            location,
+            image
+        FROM organization
+        WHERE organization_id = $1;
+    `;
+
+    const result = await db.query(
+        sql,
+        [organizationId]
+    );
+
+    return result.rows[0];
+};
+
+
+/* =========================================================
+   CREATE ORGANIZATION
+========================================================= */
+
+const createOrganization = async (
+    organization
+) => {
+    const sql = `
+        INSERT INTO organization (
+            organization_name,
+            description,
+            website,
+            contact_email,
+            phone,
+            location,
+            image
+        )
+        VALUES (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
+            $7
+        )
+        RETURNING
+            organization_id,
+            organization_name;
+    `;
+
+    const values = [
+        organization.organization_name?.trim(),
+        organization.description?.trim(),
+        organization.website?.trim() || null,
+        organization.contact_email?.trim() || null,
+        organization.phone?.trim() || null,
+        organization.location?.trim() || null,
+        organization.image?.trim() || null
+    ];
+
+    console.log(
+        "INSERT VALUES:",
+        values
+    );
+
+    const result = await db.query(
+        sql,
+        values
+    );
+
+    console.log(
+        "INSERT RESULT:",
+        result.rows[0]
+    );
+
+    return result.rows[0];
+};
+
+
+/* =========================================================
+   UPDATE ORGANIZATION
+========================================================= */
+
+const updateOrganization = async (
+    organizationId,
+    organization
+) => {
+    const sql = `
+        UPDATE organization
+        SET
+            organization_name = $1,
+            description = $2,
+            website = $3,
+            contact_email = $4,
+            phone = $5,
+            location = $6,
+            image = $7
+        WHERE organization_id = $8
+        RETURNING
+            organization_id,
+            organization_name,
+            description,
+            website,
+            contact_email,
+            phone,
+            location,
+            image;
+    `;
+
+    const values = [
+        organization.organization_name?.trim(),
+        organization.description?.trim(),
+        organization.website?.trim() || null,
+        organization.contact_email?.trim() || null,
+        organization.phone?.trim() || null,
+        organization.location?.trim() || null,
+        organization.image?.trim() || null,
+        Number(organizationId)
+    ];
+
+    console.log(
+        "UPDATE ORGANIZATION ID:",
+        organizationId
+    );
+
+    console.log(
+        "UPDATE VALUES:",
+        values
+    );
+
+    const result = await db.query(
+        sql,
+        values
+    );
+
+    console.log(
+        "UPDATE RESULT:",
+        result.rows[0]
+    );
+
+    return result.rows[0];
+};
+
+
+/* =========================================================
+   EXPORTS
+========================================================= */
 
 export {
-getAllOrganizations,
-getOrganizationDetails
+    getAllOrganizations,
+    getOrganizationById,
+    createOrganization,
+    updateOrganization
 };

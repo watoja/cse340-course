@@ -1,97 +1,165 @@
 import express from "express";
 
 import {
-showHomePage
+    showHomePage
 } from "./controllers/index.js";
 
 import {
-showOrganizationsPage,
-showOrganizationDetailsPage
+    showOrganizationsPage,
+    showOrganizationDetailsPage,
+    showCreateOrganizationPage,
+    createOrganizationController,
+    showEditOrganizationPage,
+    updateOrganizationController
 } from "./controllers/organizations.js";
 
 import {
-showProjectsPage,
-showProjectDetailsPage
+    showProjectsPage,
+    showProjectDetailsPage,
+    showCreateProjectPage,
+    createProjectAction,
+    showEditProjectPage,
+    updateProjectAction,
+    showAssignCategoriesPage,
+    updateAssignedCategories
 } from "./controllers/projects.js";
 
 import {
-showCategoriesPage,
-showCategoryDetailsPage
+    showCategoriesPage,
+    showCategoryDetailsPage,
+    showCreateCategoryPage,
+    createCategoryController,
+    showEditCategoryPage,
+    updateCategoryController
 } from "./controllers/categories.js";
 
-import {
-testErrorPage
-} from "./controllers/errors.js";
 
 const router = express.Router();
 
-/**
 
-* Home page.
-  */
-  router.get("/", showHomePage);
+/* =========================================================
+   HOME
+========================================================= */
 
-/**
+router.get(
+    "/",
+    showHomePage
+);
 
-* Organizations page.
-  */
-  router.get(
-  "/organizations",
-  showOrganizationsPage
-  );
 
-/**
+/* =========================================================
+   ORGANIZATIONS
+========================================================= */
 
-* Organization details page.
-  */
-  router.get(
-  "/organization/:id",
-  showOrganizationDetailsPage
-  );
+router.get(
+    "/organizations",
+    showOrganizationsPage
+);
 
-/**
+router.get(
+    "/organization/create",
+    showCreateOrganizationPage
+);
 
-* Upcoming service projects page.
-  */
-  router.get(
-  "/projects",
-  showProjectsPage
-  );
+router.post(
+    "/organization/create",
+    createOrganizationController
+);
 
-/**
+router.get(
+    "/organization/:id/edit",
+    showEditOrganizationPage
+);
 
-* Service project details page.
-  */
-  router.get(
-  "/project/:id",
-  showProjectDetailsPage
-  );
+router.post(
+    "/organization/:id/edit",
+    updateOrganizationController
+);
 
-/**
+router.get(
+    "/organization/:id",
+    showOrganizationDetailsPage
+);
 
-* Categories page.
-  */
-  router.get(
-  "/categories",
-  showCategoriesPage
-  );
 
-/**
+/* =========================================================
+   PROJECTS
+========================================================= */
 
-* Category details page.
-  */
-  router.get(
-  "/category/:id",
-  showCategoryDetailsPage
-  );
+router.get(
+    "/projects",
+    showProjectsPage
+);
 
-/**
+router.get(
+    "/project/create",
+    showCreateProjectPage
+);
 
-* Test route for the global error handler.
-  */
-  router.get(
-  "/test-error",
-  testErrorPage
-  );
+router.post(
+    "/project/create",
+    createProjectAction
+);
+
+router.get(
+    "/project/:id/edit",
+    showEditProjectPage
+);
+
+router.post(
+    "/project/:id/edit",
+    updateProjectAction
+);
+
+router.get(
+    "/project/:id/categories",
+    showAssignCategoriesPage
+);
+
+router.post(
+    "/project/:id/categories",
+    updateAssignedCategories
+);
+
+router.get(
+    "/project/:id",
+    showProjectDetailsPage
+);
+
+
+/* =========================================================
+   CATEGORIES
+========================================================= */
+
+router.get(
+    "/categories",
+    showCategoriesPage
+);
+
+router.get(
+    "/category/create",
+    showCreateCategoryPage
+);
+
+router.post(
+    "/category/create",
+    createCategoryController
+);
+
+router.get(
+    "/category/:id/edit",
+    showEditCategoryPage
+);
+
+router.post(
+    "/category/:id/edit",
+    updateCategoryController
+);
+
+router.get(
+    "/category/:id",
+    showCategoryDetailsPage
+);
+
 
 export default router;

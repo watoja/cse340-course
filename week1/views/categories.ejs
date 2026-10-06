@@ -1,51 +1,157 @@
 <%- include("partials/header") %>
 
-<main class="categories-page">
+<main>
+    <div class="main-content">
+
+        <section class="page-header">
+
+            <div>
+                <h1>
+                    Service Categories
+                </h1>
+
+                <p>
+                    Explore the categories used to organize
+                    community service projects.
+                </p>
+            </div>
+
+            <a
+                href="/category/create"
+                class="button btn-primary"
+            >
+                Add Category
+            </a>
+
+        </section>
 
 
-<section class="page-header">
-    <h1><%= title %></h1>
+        <% if (success && success.length > 0) { %>
 
-    <p>
-        Explore our service project categories.
-    </p>
-</section>
+            <div
+                class="success-message"
+                role="status"
+            >
 
-<section class="categories-grid">
+                <% success.forEach((message) => { %>
 
-    <% if (categories.length > 0) { %>
-
-        <% categories.forEach(category => { %>
-
-            <article class="category-card">
-
-                <h2>
-                    <a href="/category/<%= category.category_id %>">
-                        <%= category.category_name %>
-                    </a>
-                </h2>
-
-                <% if (category.description) { %>
                     <p>
-                        <%= category.description %>
+                        <%= message %>
                     </p>
-                <% } %>
 
-            </article>
+                <% }); %>
 
-        <% }); %>
+            </div>
 
-    <% } else { %>
-
-        <p>
-            There are currently no service project categories.
-        </p>
-
-    <% } %>
-
-</section>
+        <% } %>
 
 
+        <% if (error && error.length > 0) { %>
+
+            <div
+                class="form-errors"
+                role="alert"
+            >
+
+                <% error.forEach((message) => { %>
+
+                    <p>
+                        <%= message %>
+                    </p>
+
+                <% }); %>
+
+            </div>
+
+        <% } %>
+
+
+        <section class="categories-section">
+
+            <% if (categories && categories.length > 0) { %>
+
+                <div class="categories-grid">
+
+                    <% categories.forEach((category) => { %>
+
+                        <article class="category-card">
+
+                            <div class="category-content">
+
+                                <h2>
+
+                                    <a
+                                        href="/category/<%= category.category_id %>"
+                                        class="card-link"
+                                    >
+                                        <%= category.category_name %>
+                                    </a>
+
+                                </h2>
+
+
+                                <% if (category.description) { %>
+
+                                    <p>
+                                        <%= category.description %>
+                                    </p>
+
+                                <% } %>
+
+
+                                <div class="form-actions">
+
+                                    <a
+                                        href="/category/<%= category.category_id %>"
+                                        class="button"
+                                    >
+                                        View Category
+                                    </a>
+
+                                    <a
+                                        href="/category/<%= category.category_id %>/edit"
+                                        class="button btn-primary"
+                                    >
+                                        Edit Category
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    <% }); %>
+
+                </div>
+
+            <% } else { %>
+
+                <div class="empty-state">
+
+                    <h2>
+                        No Categories Found
+                    </h2>
+
+                    <p>
+                        There are currently no service categories
+                        in the database.
+                    </p>
+
+                    <a
+                        href="/category/create"
+                        class="button btn-primary"
+                    >
+                        Add the First Category
+                    </a>
+
+                </div>
+
+            <% } %>
+
+        </section>
+
+    </div>
 </main>
 
 <%- include("partials/footer") %>

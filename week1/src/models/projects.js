@@ -1,140 +1,318 @@
-import { pool } from "./db.js";
+import db from "./db.js";
+import { withTransaction } from "./db.js";
 
-/**
 
-* Get all service projects.
-*
-* @returns {Promise<Array>} List of all service projects.
-  */
-  const getAllProjects = async () => {
-  const sql = `      SELECT
-           p.project_id,
-           p.project_name AS title,
-           p.description,
-           p.project_date AS date,
-           p.location,
-           p.organization_id,
-           o.organization_name
-       FROM project AS p
-       JOIN organization AS o
-           ON p.organization_id = o.organization_id
-       ORDER BY p.project_date ASC;
-   `;
+/* GET ALL PROJECTS */
+const getAllProjects = async () => {
+    const sql = `
+        SELECT
+            p.project_id,
+            p.project_name,
+            p.description,
+            p.project_date,
+            p.location,
+            p.volunteers_needed,
+            p.organization_id,
+            o.organization_name
+        FROM project p
+        LEFT JOIN organization o
+            ON p.organization_id = o.organization_id
+        ORDER BY p.project_date ASC;
+    `;
 
-  const result = await pool.query(sql);
+    const result = await db.query(sql);
 
-  return result.rows;
-  };
+    return result.rows;
+};
 
-/**
 
-* Get upcoming service projects.
-*
-* @param {number} numberOfProjects - Number of projects to return.
-* @returns {Promise<Array>} Upcoming service projects.
-  */
-  const getUpcomingProjects = async (numberOfProjects) => {
-  const sql = `      SELECT
-           p.project_id,
-           p.project_name AS title,
-           p.description,
-           p.project_date AS date,
-           p.location,
-           p.organization_id,
-           o.organization_name
-       FROM project AS p
-       JOIN organization AS o
-           ON p.organization_id = o.organization_id
-       WHERE p.project_date >= CURRENT_DATE
-       ORDER BY p.project_date ASC
-       LIMIT $1;
-   `;
+/* GET UPCOMING PROJECTS */
+const getUpcomingProjects = async (
+    numberOfProjects
+) => {
+    const sql = `
+        SELECT
+            p.project_id,
+            p.project_name,
+            p.description,
+            p.project_date,
+            p.location,
+            p.volunteers_needed,
+            p.organization_id,
+            o.organization_name
+        FROM project p
+        LEFT JOIN organization o
+            ON p.organization_id = o.organization_id
+        WHERE p.project_date >= CURRENT_DATE
+        ORDER BY p.project_date ASC
+        LIMIT $1;
+    `;
 
-  const result = await pool.query(sql, [numberOfProjects]);
+    const result = await db.query(
+        sql,
+        [numberOfProjects]
+    );
 
-  return result.rows;
-  };
+    return result.rows;
+};
 
-/**
 
-* Get one service project by ID.
-*
-* @param {number} id - Service project ID.
-* @returns {Promise<Object|null>} Project details or null.
-  */
-  const getProjectDetails = async (id) => {
-  const sql = `      SELECT
-           p.project_id,
-           p.project_name AS title,
-           p.description,
-           p.project_date AS date,
-           p.location,
-           p.organization_id,
-           o.organization_name
-       FROM project AS p
-       JOIN organization AS o
-           ON p.organization_id = o.organization_id
-       WHERE p.project_id = $1;
-   `;
+/* GET PROJECT DETAILS */
+const getProjectDetails = async (
+    projectId
+) => {
+    const sql = `
+        SELECT
+            p.project_id,
+            p.project_name,
+            p.description,
+            p.project_date,
+            p.location,
+            p.volunteers_needed,
+            p.organization_id,
+            o.organization_name
+        FROM project p
+        LEFT JOIN organization o
+            ON p.organization_id = o.organization_id
+        WHERE p.project_id = $1;
+    `;
 
-  const result = await pool.query(sql, [id]);
+    const result = await db.query(
+        sql,
+        [projectId]
+    );
 
-  return result.rows[0] || null;
-  };
+    return result.rows[0];
+};
 
-/**
 
-* Get all categories assigned to a service project.
-*
-* @param {number} id - Service project ID.
-* @returns {Promise<Array>} Categories assigned to the project.
-  */
-  const getCategoriesByProject = async (id) => {
-  const sql = `      SELECT
-           c.category_id,
-           c.category_name,
-           c.description
-       FROM category AS c
-       JOIN project_categories AS pc
-           ON c.category_id = pc.category_id
-       WHERE pc.project_id = $1
-       ORDER BY c.category_name ASC;
-   `;
+/* CREATE PROJECT */
+const createProject = async (
+    project
+) => {
+    const sql = `
+        INSERT INTO project (
+            project_name,
+            description,
+            project_date,
+            location,
+            volunteers_needed,
+            organization_id
+        )
+        VALUES (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6
+        )
+        RETURNING
+            project_id,
+            project_name;
+    `;
 
-  const result = await pool.query(sql, [id]);
+    const values = [
+        project.project_name?.trim(),
+        project.description?.trim(),
+        project.project_date,
+        project.location?.trim(),
+        Number(project.volunteers_needed),
+        Number(project.organization_id)
+    ];
 
-  return result.rows;
-  };
+    console.log(
+        "PROJECT INSERT VALUES:",
+        values
+    );
 
-/**
+    const result = await db.query(
+        sql,
+        values
+    );
 
-* Get all service projects belonging to an organization.
-*
-* @param {number} organizationId - Organization ID.
-* @returns {Promise<Array>} Projects belonging to the organization.
-  */
-  const getProjectsByOrganizationId = async (organizationId) => {
-  const sql = `      SELECT
-           p.project_id,
-           p.organization_id,
-           p.project_name AS title,
-           p.description,
-           p.project_date AS date,
-           p.location
-       FROM project AS p
-       WHERE p.organization_id = $1
-       ORDER BY p.project_date ASC;
-   `;
+    console.log(
+        "PROJECT INSERT RESULT:",
+        result.rows[0]
+    );
 
-  const result = await pool.query(sql, [organizationId]);
+    return result.rows[0];
+};
 
-  return result.rows;
-  };
+
+/* UPDATE PROJECT */
+const updateProject = async (
+    projectId,
+    project
+) => {
+    const sql = `
+        UPDATE project
+        SET
+            project_name = $1,
+            description = $2,
+            project_date = $3,
+            location = $4,
+            volunteers_needed = $5,
+            organization_id = $6
+        WHERE project_id = $7
+        RETURNING
+            project_id,
+            project_name,
+            description,
+            project_date,
+            location,
+            volunteers_needed,
+            organization_id;
+    `;
+
+    const values = [
+        project.project_name?.trim(),
+        project.description?.trim(),
+        project.project_date,
+        project.location?.trim(),
+        Number(project.volunteers_needed),
+        Number(project.organization_id),
+        Number(projectId)
+    ];
+
+    console.log(
+        "PROJECT UPDATE ID:",
+        projectId
+    );
+
+    console.log(
+        "PROJECT UPDATE VALUES:",
+        values
+    );
+
+    const result = await db.query(
+        sql,
+        values
+    );
+
+    console.log(
+        "PROJECT UPDATE RESULT:",
+        result.rows[0]
+    );
+
+    return result.rows[0];
+};
+
+
+/* GET PROJECT ORGANIZATIONS */
+const getProjectOrganizations = async () => {
+    const sql = `
+        SELECT
+            organization_id,
+            organization_name
+        FROM organization
+        ORDER BY organization_name;
+    `;
+
+    const result = await db.query(sql);
+
+    return result.rows;
+};
+
+
+/* GET ALL CATEGORIES */
+const getProjectCategories = async () => {
+    const sql = `
+        SELECT
+            category_id,
+            category_name,
+            description
+        FROM category
+        ORDER BY category_name;
+    `;
+
+    const result = await db.query(sql);
+
+    return result.rows;
+};
+
+
+/* GET CATEGORIES ASSIGNED TO PROJECT */
+const getAssignedCategories = async (
+    projectId
+) => {
+    const sql = `
+        SELECT
+            c.category_id,
+            c.category_name
+        FROM category c
+        INNER JOIN project_categories pc
+            ON c.category_id = pc.category_id
+        WHERE pc.project_id = $1
+        ORDER BY c.category_name;
+    `;
+
+    const result = await db.query(
+        sql,
+        [projectId]
+    );
+
+    return result.rows;
+};
+
+
+/* UPDATE PROJECT CATEGORIES */
+const updateProjectCategories = async (
+    projectId,
+    categoryIds
+) => {
+    return withTransaction(
+        async (client) => {
+
+            await client.query(
+                `
+                    DELETE FROM project_categories
+                    WHERE project_id = $1;
+                `,
+                [projectId]
+            );
+
+            if (
+                categoryIds.length === 0
+            ) {
+                return true;
+            }
+
+            const sql = `
+                INSERT INTO project_categories (
+                    project_id,
+                    category_id
+                )
+                VALUES ($1, $2);
+            `;
+
+            for (
+                const categoryId
+                of categoryIds
+            ) {
+                await client.query(
+                    sql,
+                    [
+                        Number(projectId),
+                        Number(categoryId)
+                    ]
+                );
+            }
+
+            return true;
+        }
+    );
+};
+
 
 export {
-getAllProjects,
-getUpcomingProjects,
-getProjectDetails,
-getCategoriesByProject,
-getProjectsByOrganizationId
+    getAllProjects,
+    getUpcomingProjects,
+    getProjectDetails,
+    createProject,
+    updateProject,
+    getProjectOrganizations,
+    getProjectCategories,
+    getAssignedCategories,
+    updateProjectCategories
 };

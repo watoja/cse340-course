@@ -1,0 +1,177 @@
+<%- include("partials/header") %>
+
+<main class="category-details-page">
+
+    <div class="main-content">
+
+        <!-- =================================================
+             CATEGORY HEADER
+        ================================================== -->
+
+        <section class="page-header">
+
+            <h1>
+                <%= title %>
+            </h1>
+
+            <% if (category.description) { %>
+
+                <p>
+                    <%= category.description %>
+                </p>
+
+            <% } %>
+
+        </section>
+
+
+        <!-- =================================================
+             CATEGORY PROJECTS
+        ================================================== -->
+
+        <section class="category-projects">
+
+            <div class="section-heading">
+
+                <h2>
+                    Service Projects
+                </h2>
+
+                <% if (projects.length > 0) { %>
+
+                    <p>
+                        Projects assigned to the
+                        <%= category.category_name %>
+                        category.
+                    </p>
+
+                <% } %>
+
+            </div>
+
+
+            <% if (projects.length > 0) { %>
+
+                <div class="projects-grid">
+
+                    <% projects.forEach(project => { %>
+
+                        <article class="project-card">
+
+                            <div class="project-card-content">
+
+                                <h3>
+
+                                    <a
+                                        href="/project/<%= project.project_id %>"
+                                        class="card-link"
+                                    >
+                                        <%= project.title %>
+                                    </a>
+
+                                </h3>
+
+
+                                <% if (project.description) { %>
+
+                                    <p>
+                                        <%= project.description %>
+                                    </p>
+
+                                <% } %>
+
+
+                                <% if (project.date) { %>
+
+                                    <p>
+                                        <strong>Date:</strong>
+
+                                        <%= new Date(
+                                            project.date
+                                        ).toLocaleDateString() %>
+                                    </p>
+
+                                <% } %>
+
+
+                                <% if (project.location) { %>
+
+                                    <p>
+                                        <strong>Location:</strong>
+
+                                        <%= project.location %>
+                                    </p>
+
+                                <% } %>
+
+
+                                <% if (project.volunteers_needed) { %>
+
+                                    <p>
+                                        <strong>
+                                            Volunteers Needed:
+                                        </strong>
+
+                                        <%= project.volunteers_needed %>
+                                    </p>
+
+                                <% } %>
+
+
+                                <% if (project.organization_name) { %>
+
+                                    <p>
+                                        <strong>
+                                            Partner Organization:
+                                        </strong>
+
+                                        <a
+                                            href="/organization/<%= project.organization_id %>"
+                                        >
+                                            <%= project.organization_name %>
+                                        </a>
+                                    </p>
+
+                                <% } %>
+
+
+                                <a
+                                    href="/project/<%= project.project_id %>"
+                                    class="button"
+                                >
+                                    View Project
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    <% }); %>
+
+                </div>
+
+
+            <% } else { %>
+
+                <div class="empty-state">
+
+                    <h3>
+                        No Projects Available
+                    </h3>
+
+                    <p>
+                        No service projects are currently
+                        assigned to this category.
+                    </p>
+
+                </div>
+
+            <% } %>
+
+        </section>
+
+    </div>
+
+</main>
+
+<%- include("partials/footer") %>

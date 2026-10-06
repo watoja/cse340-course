@@ -1,0 +1,208 @@
+<%- include("partials/header") %>
+
+<main>
+    <div class="main-content">
+
+        <section class="page-header">
+
+            <h1>
+                Add Organization
+            </h1>
+
+            <p>
+                Add a new community service organization.
+            </p>
+
+        </section>
+
+
+        <% if (errors && errors.length > 0) { %>
+
+            <div
+                class="form-errors"
+                role="alert"
+            >
+
+                <h2>
+                    Please correct the following:
+                </h2>
+
+                <ul>
+
+                    <% errors.forEach((error) => { %>
+
+                        <li>
+                            <%= error %>
+                        </li>
+
+                    <% }); %>
+
+                </ul>
+
+            </div>
+
+        <% } %>
+
+
+        <section class="form-section">
+
+            <form
+                action="/organization/create"
+                method="POST"
+                id="organization-form"
+                novalidate
+            >
+
+                <div class="form-group">
+
+                    <label for="organization_name">
+                        Organization Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="organization_name"
+                        name="organization_name"
+                        class="form-control"
+                        value="<%= organization.organization_name || '' %>"
+                        minlength="2"
+                        maxlength="100"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        class="form-control"
+                        minlength="10"
+                        maxlength="1000"
+                        required
+                    ><%= organization.description || '' %></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="website">
+                        Website
+                    </label>
+
+                    <input
+                        type="url"
+                        id="website"
+                        name="website"
+                        class="form-control"
+                        value="<%= organization.website || '' %>"
+                        placeholder="https://example.org"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="contact_email">
+                        Contact Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="contact_email"
+                        name="contact_email"
+                        class="form-control"
+                        value="<%= organization.contact_email || '' %>"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Phone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        class="form-control"
+                        value="<%= organization.phone || '' %>"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="location">
+                        Location
+                    </label>
+
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        class="form-control"
+                        value="<%= organization.location || '' %>"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="image">
+                        Image File Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="image"
+                        name="image"
+                        class="form-control"
+                        value="<%= organization.image || '' %>"
+                        placeholder="organization.jpg"
+                    >
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="button btn-primary"
+                    >
+                        Create Organization
+                    </button>
+
+                    <a
+                        href="/organizations"
+                        class="button"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </div>
+</main>
+
+<script src="/js/validation.js" defer></script>
+
+<%- include("partials/footer") %>

@@ -1,0 +1,113 @@
+<%- include("partials/header") %>
+
+<main>
+    <div class="main-content">
+
+        <section class="page-header">
+
+            <h1>
+                Assign Categories
+            </h1>
+
+            <p>
+                Choose the categories that describe
+                <strong>
+                    <%= project.project_name %>
+                </strong>.
+            </p>
+
+        </section>
+
+
+        <section class="form-section">
+
+            <form
+                action="/project/<%= project.project_id %>/categories"
+                method="POST"
+            >
+
+                <fieldset>
+
+                    <legend>
+                        Project Categories
+                    </legend>
+
+
+                    <% if (categories && categories.length > 0) { %>
+
+                        <div class="category-items">
+
+                            <% categories.forEach((category) => { %>
+
+                                <div class="form-group">
+
+                                    <label
+                                        for="category-<%= category.category_id %>"
+                                    >
+
+                                        <input
+                                            type="checkbox"
+                                            id="category-<%= category.category_id %>"
+                                            name="category_ids"
+                                            value="<%= category.category_id %>"
+                                            <%= assignedCategoryIds.includes(Number(category.category_id)) ? "checked" : "" %>
+                                        >
+
+                                        <span>
+                                            <%= category.category_name %>
+                                        </span>
+
+                                    </label>
+
+                                    <% if (category.description) { %>
+
+                                        <p>
+                                            <%= category.description %>
+                                        </p>
+
+                                    <% } %>
+
+                                </div>
+
+                            <% }); %>
+
+                        </div>
+
+                    <% } else { %>
+
+                        <p>
+                            No categories were found in the database.
+                        </p>
+
+                    <% } %>
+
+
+                </fieldset>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="button btn-primary"
+                    >
+                        Save Categories
+                    </button>
+
+                    <a
+                        href="/project/<%= project.project_id %>"
+                        class="button"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </div>
+</main>
+
+<%- include("partials/footer") %>

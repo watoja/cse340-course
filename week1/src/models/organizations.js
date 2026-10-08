@@ -1,9 +1,9 @@
 import db from "./db.js";
 
 
-/* =========================================================
-   GET ALL ORGANIZATIONS
-========================================================= */
+const DEFAULT_ORGANIZATION_IMAGE =
+    "placeholder-logo.png";
+
 
 const getAllOrganizations = async () => {
     const sql = `
@@ -25,10 +25,6 @@ const getAllOrganizations = async () => {
     return result.rows;
 };
 
-
-/* =========================================================
-   GET ORGANIZATION BY ID
-========================================================= */
 
 const getOrganizationById = async (
     organizationId
@@ -55,10 +51,6 @@ const getOrganizationById = async (
     return result.rows[0];
 };
 
-
-/* =========================================================
-   CREATE ORGANIZATION
-========================================================= */
 
 const createOrganization = async (
     organization
@@ -94,11 +86,11 @@ const createOrganization = async (
         organization.contact_email?.trim() || null,
         organization.phone?.trim() || null,
         organization.location?.trim() || null,
-        organization.image?.trim() || null
+        DEFAULT_ORGANIZATION_IMAGE
     ];
 
     console.log(
-        "INSERT VALUES:",
+        "ORGANIZATION INSERT VALUES:",
         values
     );
 
@@ -108,17 +100,13 @@ const createOrganization = async (
     );
 
     console.log(
-        "INSERT RESULT:",
+        "ORGANIZATION INSERT RESULT:",
         result.rows[0]
     );
 
     return result.rows[0];
 };
 
-
-/* =========================================================
-   UPDATE ORGANIZATION
-========================================================= */
 
 const updateOrganization = async (
     organizationId,
@@ -153,7 +141,8 @@ const updateOrganization = async (
         organization.contact_email?.trim() || null,
         organization.phone?.trim() || null,
         organization.location?.trim() || null,
-        organization.image?.trim() || null,
+        organization.image?.trim() ||
+            DEFAULT_ORGANIZATION_IMAGE,
         Number(organizationId)
     ];
 
@@ -173,17 +162,13 @@ const updateOrganization = async (
     );
 
     console.log(
-        "UPDATE RESULT:",
+        "UPDATE ORGANIZATION RESULT:",
         result.rows[0]
     );
 
     return result.rows[0];
 };
 
-
-/* =========================================================
-   EXPORTS
-========================================================= */
 
 export {
     getAllOrganizations,

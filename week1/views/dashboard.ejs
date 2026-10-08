@@ -1,0 +1,275 @@
+<%- include("partials/header") %>
+
+<main class="dashboard-page">
+
+    <!-- =====================================================
+         DASHBOARD HEADER
+    ====================================================== -->
+
+    <section class="page-header">
+        <h1>Dashboard</h1>
+
+        <p>
+            Welcome back, <strong><%= name %></strong>.
+        </p>
+    </section>
+
+
+    <!-- =====================================================
+         ACCOUNT INFORMATION
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>Account Information</h2>
+
+            <p>
+                View your current account information.
+            </p>
+        </div>
+
+        <div class="card dashboard-account-card">
+
+            <div class="dashboard-account-item">
+                <strong>Name</strong>
+
+                <span>
+                    <%= name %>
+                </span>
+            </div>
+
+            <div class="dashboard-account-item">
+                <strong>Email</strong>
+
+                <span>
+                    <%= email %>
+                </span>
+            </div>
+
+            <div class="dashboard-account-item">
+                <strong>Role</strong>
+
+                <span>
+                    <%= role %>
+                </span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ADMIN MANAGEMENT
+         ONLY VISIBLE TO ADMIN USERS
+    ====================================================== -->
+
+    <% if (role === "admin") { %>
+
+        <section class="dashboard-section admin-dashboard-section">
+
+            <div class="section-heading">
+                <h2>Administration</h2>
+
+                <p>
+                    Manage and update the content of the
+                    Community Service Projects website.
+                </p>
+            </div>
+
+
+            <!-- =================================================
+                 ORGANIZATIONS
+            ================================================== -->
+
+            <div class="dashboard-management-card">
+
+                <div class="dashboard-management-content">
+
+                    <h3>Organizations</h3>
+
+                    <p>
+                        View all organizations and update
+                        existing organization information.
+                    </p>
+
+                </div>
+
+                <div class="dashboard-actions">
+
+                    <a
+                        href="/organizations"
+                        class="button"
+                    >
+                        Manage Organizations
+                    </a>
+
+                    <a
+                        href="/organization/create"
+                        class="button"
+                    >
+                        Add Organization
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PROJECTS
+            ================================================== -->
+
+            <div class="dashboard-management-card">
+
+                <div class="dashboard-management-content">
+
+                    <h3>Projects</h3>
+
+                    <p>
+                        View projects, update project information,
+                        and manage project categories.
+                    </p>
+
+                </div>
+
+                <div class="dashboard-actions">
+
+                    <a
+                        href="/projects"
+                        class="button"
+                    >
+                        Manage Projects
+                    </a>
+
+                    <a
+                        href="/project/create"
+                        class="button"
+                    >
+                        Add Project
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CATEGORIES
+            ================================================== -->
+
+            <div class="dashboard-management-card">
+
+                <div class="dashboard-management-content">
+
+                    <h3>Categories</h3>
+
+                    <p>
+                        View categories and update the categories
+                        used to organize service projects.
+                    </p>
+
+                </div>
+
+                <div class="dashboard-actions">
+
+                    <a
+                        href="/categories"
+                        class="button"
+                    >
+                        Manage Categories
+                    </a>
+
+                    <a
+                        href="/category/create"
+                        class="button"
+                    >
+                        Add Category
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 USERS
+            ================================================== -->
+
+            <div class="dashboard-management-card">
+
+                <div class="dashboard-management-content">
+
+                    <h3>Users</h3>
+
+                    <p>
+                        View registered users and their assigned
+                        roles.
+                    </p>
+
+                </div>
+
+                <div class="dashboard-actions">
+
+                    <a
+                        href="/users"
+                        class="button"
+                    >
+                        Manage Users
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    <% } %>
+
+
+    <!-- =====================================================
+         GENERAL DASHBOARD INFORMATION
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>Community Service Projects</h2>
+
+            <p>
+                Explore organizations, projects, and categories
+                available on the website.
+            </p>
+        </div>
+
+        <div class="dashboard-navigation">
+
+            <a
+                href="/organizations"
+                class="button"
+            >
+                View Organizations
+            </a>
+
+            <a
+                href="/projects"
+                class="button"
+            >
+                View Projects
+            </a>
+
+            <a
+                href="/categories"
+                class="button"
+            >
+                View Categories
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+<%- include("partials/footer") %>

@@ -6,6 +6,7 @@ import session from "express-session";
 import flash from "connect-flash";
 
 import routes from "./src/routes.js";
+
 import {
     testConnection
 } from "./src/models/db.js";
@@ -99,6 +100,7 @@ app.use(
 
         cookie: {
             secure: false,
+
             maxAge:
                 1000 * 60 * 60
         }
@@ -122,15 +124,54 @@ app.use(
 app.use(
     (req, res, next) => {
 
+        /*
+         * Get the currently authenticated
+         * user from the session.
+         */
+
+        const currentUser =
+            req.session.user || null;
+
+
+        /*
+         * Make the current user available
+         * to every EJS view.
+         */
+
+        res.locals.currentUser =
+            currentUser;
+
+
+        /*
+         * Determine whether a user
+         * is currently logged in.
+         */
+
+        res.locals.isLoggedIn =
+            Boolean(currentUser);
+
+
+        /*
+         * Make NODE_ENV available
+         * to all EJS views.
+         */
+
         res.locals.NODE_ENV =
             process.env.NODE_ENV ||
             "development";
+
+
+        /*
+         * Make flash messages available
+         * to all EJS views.
+         */
 
         res.locals.success =
             req.flash("success");
 
         res.locals.error =
             req.flash("error");
+
 
         next();
     }

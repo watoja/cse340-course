@@ -6,6 +6,7 @@
         <section class="page-header">
 
             <div>
+
                 <h1>
                     Service Categories
                 </h1>
@@ -14,14 +15,20 @@
                     Explore the categories used to organize
                     community service projects.
                 </p>
+
             </div>
 
-            <a
-                href="/category/create"
-                class="button btn-primary"
-            >
-                Add Category
-            </a>
+
+            <% if (isLoggedIn && currentUser && currentUser.role === "admin") { %>
+
+                <a
+                    href="/category/create"
+                    class="button btn-primary"
+                >
+                    Add Category
+                </a>
+
+            <% } %>
 
         </section>
 
@@ -108,12 +115,17 @@
                                         View Category
                                     </a>
 
-                                    <a
-                                        href="/category/<%= category.category_id %>/edit"
-                                        class="button btn-primary"
-                                    >
-                                        Edit Category
-                                    </a>
+
+                                    <% if (isLoggedIn && currentUser && currentUser.role === "admin") { %>
+
+                                        <a
+                                            href="/category/<%= category.category_id %>/edit"
+                                            class="button btn-primary"
+                                        >
+                                            Edit Category
+                                        </a>
+
+                                    <% } %>
 
                                 </div>
 
@@ -138,12 +150,17 @@
                         in the database.
                     </p>
 
-                    <a
-                        href="/category/create"
-                        class="button btn-primary"
-                    >
-                        Add the First Category
-                    </a>
+
+                    <% if (isLoggedIn && currentUser && currentUser.role === "admin") { %>
+
+                        <a
+                            href="/category/create"
+                            class="button btn-primary"
+                        >
+                            Add the First Category
+                        </a>
+
+                    <% } %>
 
                 </div>
 

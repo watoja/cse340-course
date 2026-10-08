@@ -11,16 +11,23 @@
                 Organizations involved in community service.
             </p>
 
-            <div class="page-actions">
-                <a
-                    href="/organization/create"
-                    class="button"
-                >
-                    Add Organization
-                </a>
-            </div>
+            <% if (isLoggedIn && currentUser && currentUser.role === "admin") { %>
+
+                <div class="page-actions">
+
+                    <a
+                        href="/organization/create"
+                        class="button"
+                    >
+                        Add Organization
+                    </a>
+
+                </div>
+
+            <% } %>
 
         </section>
+
 
         <section class="organizations-section">
 
@@ -43,27 +50,33 @@
 
                             <% } %>
 
+
                             <div class="organization-content">
 
                                 <h2>
                                     <%= organization.organization_name %>
                                 </h2>
 
+
                                 <p>
                                     <%= organization.description %>
                                 </p>
 
+
                                 <% if (organization.location) { %>
 
                                     <p>
+
                                         <strong>
                                             Location:
                                         </strong>
 
                                         <%= organization.location %>
+
                                     </p>
 
                                 <% } %>
+
 
                                 <a
                                     href="/organization/<%= organization.organization_id %>"

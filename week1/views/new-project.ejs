@@ -13,6 +13,12 @@
                 Create a new community service project.
             </p>
 
+            <p>
+                <strong>
+                    Administrator access required.
+                </strong>
+            </p>
+
         </section>
 
 
@@ -166,6 +172,7 @@
                             Select an organization
                         </option>
 
+
                         <% organizations.forEach((organization) => { %>
 
                             <option
@@ -207,6 +214,11 @@
     </div>
 </main>
 
-<script src="/js/validation.js" defer></script>
+
+<script
+    src="/js/validation.js"
+    defer
+></script>
+
 
 <%- include("partials/footer") %>

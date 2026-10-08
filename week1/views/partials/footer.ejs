@@ -6,7 +6,9 @@
 
             <section class="footer-section">
 
-                <h2>Get Involved</h2>
+                <h2>
+                    Get Involved
+                </h2>
 
                 <p>
                     Find opportunities to volunteer your time,
@@ -18,7 +20,9 @@
 
             <section class="footer-section">
 
-                <h2>Our Focus</h2>
+                <h2>
+                    Our Focus
+                </h2>
 
                 <p>
                     Environmental service, education, community
@@ -42,7 +46,9 @@
 
                 <% if (NODE_ENV === "development") { %>
 
-                    (Development mode)
+                    <span>
+                        (Development mode)
+                    </span>
 
                 <% } %>
 
@@ -64,16 +70,33 @@
 </footer>
 
 
-<script src="/scripts/navigation.js"></script>
+<script
+    src="/scripts/navigation.js"
+    defer
+></script>
 
 
 <script>
 
-    document.getElementById("currentYear").textContent =
-        new Date().getFullYear();
+    const currentYear =
+        document.getElementById("currentYear");
 
-    document.getElementById("lastModified").textContent =
-        document.lastModified;
+    const lastModified =
+        document.getElementById("lastModified");
+
+    if (currentYear) {
+
+        currentYear.textContent =
+            new Date().getFullYear();
+
+    }
+
+    if (lastModified) {
+
+        lastModified.textContent =
+            document.lastModified;
+
+    }
 
 </script>
 

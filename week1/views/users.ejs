@@ -1,0 +1,98 @@
+<%- include("partials/header") %>
+
+
+<main class="users-page">
+
+    <section class="page-header">
+
+        <h1>
+            <%= title %>
+        </h1>
+
+        <p>
+            View all registered users and their roles.
+        </p>
+
+    </section>
+
+
+    <section class="users-content">
+
+        <% if (users && users.length > 0) { %>
+
+            <div class="users-table-container">
+
+                <table class="users-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th scope="col">
+                                Name
+                            </th>
+
+                            <th scope="col">
+                                Username
+                            </th>
+
+                            <th scope="col">
+                                Role
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <% users.forEach((user) => { %>
+
+                            <tr>
+
+                                <td>
+                                    <%= user.name %>
+                                </td>
+
+                                <td>
+                                    <%= user.email %>
+                                </td>
+
+                                <td>
+                                    <%= user.role %>
+                                </td>
+
+                            </tr>
+
+                        <% }); %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        <% } else { %>
+
+            <div class="card">
+
+                <h2>
+                    No Registered Users
+                </h2>
+
+                <p>
+                    No registered users were found.
+                </p>
+
+            </div>
+
+        <% } %>
+
+    </section>
+
+
+</main>
+
+
+<%- include("partials/footer") %>

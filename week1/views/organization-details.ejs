@@ -130,12 +130,17 @@
 
                     <div class="form-actions">
 
-                        <a
-                            href="/organization/<%= organization.organization_id %>/edit"
-                            class="button"
-                        >
-                            Edit Organization
-                        </a>
+                        <% if (isLoggedIn && currentUser && currentUser.role === "admin") { %>
+
+                            <a
+                                href="/organization/<%= organization.organization_id %>/edit"
+                                class="button"
+                            >
+                                Edit Organization
+                            </a>
+
+                        <% } %>
+
 
                         <a
                             href="/organizations"

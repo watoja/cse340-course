@@ -259,7 +259,16 @@ const updateOrganizationController =
                     req.body.phone,
                 location:
                     req.body.location,
+
+                /*
+                 * Allow the image to be edited.
+                 *
+                 * If no image is supplied, keep the
+                 * existing image. If there is no existing
+                 * image, the model will use the default.
+                 */
                 image:
+                    req.body.image?.trim() ||
                     existingOrganization.image
             };
 

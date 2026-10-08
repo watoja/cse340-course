@@ -13,16 +13,21 @@
                 Discover upcoming opportunities to serve in your community.
             </p>
 
-            <div class="form-actions">
 
-                <a
-                    href="/project/create"
-                    class="button btn-primary"
-                >
-                    Add Project
-                </a>
+            <% if (isLoggedIn && currentUser && currentUser.role === "admin") { %>
 
-            </div>
+                <div class="form-actions">
+
+                    <a
+                        href="/project/create"
+                        class="button btn-primary"
+                    >
+                        Add Project
+                    </a>
+
+                </div>
+
+            <% } %>
 
         </section>
 

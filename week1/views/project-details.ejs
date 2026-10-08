@@ -146,19 +146,28 @@
 
                     <div class="form-actions">
 
-                        <a
-                            href="/project/<%= project.project_id %>/edit"
-                            class="button"
-                        >
-                            Edit Project
-                        </a>
+                        <% if (
+                            isLoggedIn &&
+                            currentUser &&
+                            currentUser.role === "admin"
+                        ) { %>
 
-                        <a
-                            href="/project/<%= project.project_id %>/categories"
-                            class="button"
-                        >
-                            Assign Categories
-                        </a>
+                            <a
+                                href="/project/<%= project.project_id %>/edit"
+                                class="button"
+                            >
+                                Edit Project
+                            </a>
+
+                            <a
+                                href="/project/<%= project.project_id %>/categories"
+                                class="button"
+                            >
+                                Assign Categories
+                            </a>
+
+                        <% } %>
+
 
                         <a
                             href="/projects"

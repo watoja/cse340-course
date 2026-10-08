@@ -50,14 +50,20 @@
                         <%= category.description %>
                     </p>
 
+
                     <div class="form-actions">
 
-                        <a
-                            href="/category/<%= category.category_id %>/edit"
-                            class="button btn-primary"
-                        >
-                            Edit Category
-                        </a>
+                        <% if (isLoggedIn && currentUser && currentUser.role === "admin") { %>
+
+                            <a
+                                href="/category/<%= category.category_id %>/edit"
+                                class="button btn-primary"
+                            >
+                                Edit Category
+                            </a>
+
+                        <% } %>
+
 
                         <a
                             href="/categories"
@@ -111,9 +117,11 @@
 
                                 </h3>
 
+
                                 <p>
                                     <%= project.description %>
                                 </p>
+
 
                                 <p>
                                     <strong>
@@ -123,6 +131,7 @@
                                     <%= new Date(project.project_date).toLocaleDateString() %>
                                 </p>
 
+
                                 <p>
                                     <strong>
                                         Location:
@@ -130,6 +139,7 @@
 
                                     <%= project.location %>
                                 </p>
+
 
                                 <% if (project.organization_name) { %>
 
@@ -146,6 +156,7 @@
                                     </p>
 
                                 <% } %>
+
 
                                 <div class="form-actions">
 

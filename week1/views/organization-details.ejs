@@ -3,6 +3,26 @@
 <main>
     <div class="main-content">
 
+        <% if (success && success.length > 0) { %>
+
+            <div
+                class="form-success"
+                role="status"
+            >
+
+                <% success.forEach((message) => { %>
+
+                    <p>
+                        <%= message %>
+                    </p>
+
+                <% }); %>
+
+            </div>
+
+        <% } %>
+
+
         <section class="page-header">
 
             <h1>
@@ -10,40 +30,26 @@
             </h1>
 
             <p>
-                Organization details
+                Organization details.
             </p>
 
         </section>
-
-
-        <% if (success && success.length > 0) { %>
-
-            <div
-                class="success-message"
-                role="status"
-            >
-                <% success.forEach((message) => { %>
-                    <p>
-                        <%= message %>
-                    </p>
-                <% }); %>
-            </div>
-
-        <% } %>
 
 
         <section class="organization-details">
 
             <article class="organization-card">
 
-
                 <% if (organization.image) { %>
 
-                    <img
-                        src="/images/<%= organization.image %>"
-                        alt="<%= organization.organization_name %>"
-                        class="organization-image"
-                    >
+                    <div class="organization-image">
+
+                        <img
+                            src="/images/<%= organization.image %>"
+                            alt="<%= organization.organization_name %>"
+                        >
+
+                    </div>
 
                 <% } %>
 
@@ -60,27 +66,20 @@
                     </p>
 
 
-                    <% if (organization.location) { %>
+                    <% if (organization.website) { %>
 
                         <p>
                             <strong>
-                                Location:
+                                Website:
                             </strong>
 
-                            <%= organization.location %>
-                        </p>
-
-                    <% } %>
-
-
-                    <% if (organization.phone) { %>
-
-                        <p>
-                            <strong>
-                                Phone:
-                            </strong>
-
-                            <%= organization.phone %>
+                            <a
+                                href="<%= organization.website %>"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <%= organization.website %>
+                            </a>
                         </p>
 
                     <% } %>
@@ -103,20 +102,27 @@
                     <% } %>
 
 
-                    <% if (organization.website) { %>
+                    <% if (organization.phone) { %>
 
                         <p>
                             <strong>
-                                Website:
+                                Phone:
                             </strong>
 
-                            <a
-                                href="<%= organization.website %>"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Visit Website
-                            </a>
+                            <%= organization.phone %>
+                        </p>
+
+                    <% } %>
+
+
+                    <% if (organization.location) { %>
+
+                        <p>
+                            <strong>
+                                Location:
+                            </strong>
+
+                            <%= organization.location %>
                         </p>
 
                     <% } %>
@@ -126,11 +132,10 @@
 
                         <a
                             href="/organization/<%= organization.organization_id %>/edit"
-                            class="button btn-primary"
+                            class="button"
                         >
                             Edit Organization
                         </a>
-
 
                         <a
                             href="/organizations"

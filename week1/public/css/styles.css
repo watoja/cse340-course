@@ -763,6 +763,19 @@ section {
     color: var(--color-secondary-text);
 }
 
+/* Organization detail action buttons */
+
+.organization-details .button,
+.organization-details .button:visited {
+    color: var(--color-primary);
+    background: var(--color-accent);
+}
+
+.organization-details .button:hover,
+.organization-details .button:focus-visible {
+    color: var(--color-bg-surface);
+    background: var(--color-primary);
+}
 
 /* =========================================================
    Project Cards
@@ -838,6 +851,31 @@ section {
     min-height: 0;
 }
 
+.flash-message {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+}
+
+.flash-message p {
+    margin: 0;
+}
+
+.flash-success {
+    background: #e5edf5;
+    color: #123c69;
+    border-left: 4px solid #f4c542;
+}
+
+.flash-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border-left: 4px solid #991b1b;
+}
 
 /* =========================================================
    Detail Information

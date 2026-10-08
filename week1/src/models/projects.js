@@ -2,8 +2,8 @@ import db from "./db.js";
 import { withTransaction } from "./db.js";
 
 
-/* GET ALL PROJECTS */
 const getAllProjects = async () => {
+
     const sql = `
         SELECT
             p.project_id,
@@ -16,20 +16,22 @@ const getAllProjects = async () => {
             o.organization_name
         FROM project p
         LEFT JOIN organization o
-            ON p.organization_id = o.organization_id
+            ON p.organization_id =
+               o.organization_id
         ORDER BY p.project_date ASC;
     `;
 
-    const result = await db.query(sql);
+    const result =
+        await db.query(sql);
 
     return result.rows;
 };
 
 
-/* GET UPCOMING PROJECTS */
 const getUpcomingProjects = async (
     numberOfProjects
 ) => {
+
     const sql = `
         SELECT
             p.project_id,
@@ -42,25 +44,27 @@ const getUpcomingProjects = async (
             o.organization_name
         FROM project p
         LEFT JOIN organization o
-            ON p.organization_id = o.organization_id
+            ON p.organization_id =
+               o.organization_id
         WHERE p.project_date >= CURRENT_DATE
         ORDER BY p.project_date ASC
         LIMIT $1;
     `;
 
-    const result = await db.query(
-        sql,
-        [numberOfProjects]
-    );
+    const result =
+        await db.query(
+            sql,
+            [numberOfProjects]
+        );
 
     return result.rows;
 };
 
 
-/* GET PROJECT DETAILS */
 const getProjectDetails = async (
     projectId
 ) => {
+
     const sql = `
         SELECT
             p.project_id,
@@ -73,23 +77,51 @@ const getProjectDetails = async (
             o.organization_name
         FROM project p
         LEFT JOIN organization o
-            ON p.organization_id = o.organization_id
+            ON p.organization_id =
+               o.organization_id
         WHERE p.project_id = $1;
     `;
 
-    const result = await db.query(
-        sql,
-        [projectId]
-    );
+    const result =
+        await db.query(
+            sql,
+            [projectId]
+        );
 
     return result.rows[0];
 };
 
 
-/* CREATE PROJECT */
+const getProjectCategoriesById =
+    async (projectId) => {
+
+        const sql = `
+            SELECT
+                c.category_id,
+                c.category_name,
+                c.description
+            FROM category c
+            INNER JOIN project_categories pc
+                ON c.category_id =
+                   pc.category_id
+            WHERE pc.project_id = $1
+            ORDER BY c.category_name;
+        `;
+
+        const result =
+            await db.query(
+                sql,
+                [projectId]
+            );
+
+        return result.rows;
+    };
+
+
 const createProject = async (
     project
 ) => {
+
     const sql = `
         INSERT INTO project (
             project_name,
@@ -126,10 +158,11 @@ const createProject = async (
         values
     );
 
-    const result = await db.query(
-        sql,
-        values
-    );
+    const result =
+        await db.query(
+            sql,
+            values
+        );
 
     console.log(
         "PROJECT INSERT RESULT:",
@@ -140,11 +173,11 @@ const createProject = async (
 };
 
 
-/* UPDATE PROJECT */
 const updateProject = async (
     projectId,
     project
 ) => {
+
     const sql = `
         UPDATE project
         SET
@@ -185,10 +218,11 @@ const updateProject = async (
         values
     );
 
-    const result = await db.query(
-        sql,
-        values
-    );
+    const result =
+        await db.query(
+            sql,
+            values
+        );
 
     console.log(
         "PROJECT UPDATE RESULT:",
@@ -199,8 +233,8 @@ const updateProject = async (
 };
 
 
-/* GET PROJECT ORGANIZATIONS */
 const getProjectOrganizations = async () => {
+
     const sql = `
         SELECT
             organization_id,
@@ -209,14 +243,15 @@ const getProjectOrganizations = async () => {
         ORDER BY organization_name;
     `;
 
-    const result = await db.query(sql);
+    const result =
+        await db.query(sql);
 
     return result.rows;
 };
 
 
-/* GET ALL CATEGORIES */
 const getProjectCategories = async () => {
+
     const sql = `
         SELECT
             category_id,
@@ -226,41 +261,44 @@ const getProjectCategories = async () => {
         ORDER BY category_name;
     `;
 
-    const result = await db.query(sql);
+    const result =
+        await db.query(sql);
 
     return result.rows;
 };
 
 
-/* GET CATEGORIES ASSIGNED TO PROJECT */
 const getAssignedCategories = async (
     projectId
 ) => {
+
     const sql = `
         SELECT
             c.category_id,
             c.category_name
         FROM category c
         INNER JOIN project_categories pc
-            ON c.category_id = pc.category_id
+            ON c.category_id =
+               pc.category_id
         WHERE pc.project_id = $1
         ORDER BY c.category_name;
     `;
 
-    const result = await db.query(
-        sql,
-        [projectId]
-    );
+    const result =
+        await db.query(
+            sql,
+            [projectId]
+        );
 
     return result.rows;
 };
 
 
-/* UPDATE PROJECT CATEGORIES */
 const updateProjectCategories = async (
     projectId,
     categoryIds
 ) => {
+
     return withTransaction(
         async (client) => {
 
@@ -290,6 +328,7 @@ const updateProjectCategories = async (
                 const categoryId
                 of categoryIds
             ) {
+
                 await client.query(
                     sql,
                     [
@@ -309,6 +348,7 @@ export {
     getAllProjects,
     getUpcomingProjects,
     getProjectDetails,
+    getProjectCategoriesById,
     createProject,
     updateProject,
     getProjectOrganizations,

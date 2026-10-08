@@ -1,18 +1,14 @@
 import {
+    validationResult
+} from "express-validator";
+
+import {
     getAllOrganizations,
     getOrganizationById,
     createOrganization,
     updateOrganization
 } from "../models/organizations.js";
 
-import {
-    validateOrganization
-} from "../utils/validation.js";
-
-
-/* =========================================================
-   SHOW ALL ORGANIZATIONS
-========================================================= */
 
 const showOrganizationsPage = async (
     req,
@@ -20,6 +16,7 @@ const showOrganizationsPage = async (
     next
 ) => {
     try {
+
         const organizations =
             await getAllOrganizations();
 
@@ -30,15 +27,12 @@ const showOrganizationsPage = async (
                 organizations
             }
         );
+
     } catch (error) {
         next(error);
     }
 };
 
-
-/* =========================================================
-   SHOW ORGANIZATION DETAILS
-========================================================= */
 
 const showOrganizationDetailsPage = async (
     req,
@@ -46,23 +40,23 @@ const showOrganizationDetailsPage = async (
     next
 ) => {
     try {
+
         const organizationId =
             Number(req.params.id);
 
         if (
             !Number.isInteger(
                 organizationId
-            )
+            ) ||
+            organizationId < 1
         ) {
             return res.status(404).render(
                 "errors/error",
                 {
-                    title:
-                        "Organization Not Found",
-
+                    title: "Organization Not Found",
                     error: {
                         message:
-                            "The requested organization does not exist."
+                            "The requested organization could not be found."
                     }
                 }
             );
@@ -77,12 +71,10 @@ const showOrganizationDetailsPage = async (
             return res.status(404).render(
                 "errors/error",
                 {
-                    title:
-                        "Organization Not Found",
-
+                    title: "Organization Not Found",
                     error: {
                         message:
-                            "The requested organization does not exist."
+                            "The requested organization could not be found."
                     }
                 }
             );
@@ -93,19 +85,15 @@ const showOrganizationDetailsPage = async (
             {
                 title:
                     organization.organization_name,
-
                 organization
             }
         );
+
     } catch (error) {
         next(error);
     }
 };
 
-
-/* =========================================================
-   SHOW CREATE FORM
-========================================================= */
 
 const showCreateOrganizationPage = async (
     req,
@@ -114,27 +102,13 @@ const showCreateOrganizationPage = async (
     res.render(
         "new-organization",
         {
-            title: "Add Organization",
-
-            organization: {
-                organization_name: "",
-                description: "",
-                website: "",
-                contact_email: "",
-                phone: "",
-                location: "",
-                image: ""
-            },
-
+            title: "Create Organization",
+            organization: {},
             errors: []
         }
     );
 };
 
-
-/* =========================================================
-   CREATE ORGANIZATION
-========================================================= */
 
 const createOrganizationController = async (
     req,
@@ -142,63 +116,58 @@ const createOrganizationController = async (
     next
 ) => {
     try {
-        console.log(
-            "POST /organization/create received"
-        );
-
-        console.log(
-            "FORM DATA:",
-            req.body
-        );
 
         const errors =
-            validateOrganization(
-                req.body
-            );
+            validationResult(req);
 
-        if (errors.length > 0) {
+        const organization = {
+            organization_name:
+                req.body.organization_name,
+            description:
+                req.body.description,
+            website:
+                req.body.website,
+            contact_email:
+                req.body.contact_email,
+            phone:
+                req.body.phone,
+            location:
+                req.body.location
+        };
+
+        if (!errors.isEmpty()) {
+
             return res.status(400).render(
                 "new-organization",
                 {
-                    title: "Add Organization",
-                    organization: req.body,
-                    errors
+                    title:
+                        "Create Organization",
+                    organization,
+                    errors:
+                        errors.array()
                 }
             );
         }
 
-        const organization =
+        const createdOrganization =
             await createOrganization(
-                req.body
+                organization
             );
-
-        console.log(
-            "DATABASE RESULT:",
-            organization
-        );
 
         req.flash(
             "success",
-            "Organization created successfully."
+            `Organization "${createdOrganization.organization_name}" was created successfully.`
         );
 
         res.redirect(
-            "/organizations"
-        );
-    } catch (error) {
-        console.error(
-            "CREATE ORGANIZATION ERROR:",
-            error
+            `/organization/${createdOrganization.organization_id}`
         );
 
+    } catch (error) {
         next(error);
     }
 };
 
-
-/* =========================================================
-   SHOW EDIT FORM
-========================================================= */
 
 const showEditOrganizationPage = async (
     req,
@@ -206,53 +175,23 @@ const showEditOrganizationPage = async (
     next
 ) => {
     try {
+
         const organizationId =
             Number(req.params.id);
-
-        console.log(
-            "EDIT PAGE ID:",
-            organizationId
-        );
-
-        if (
-            !Number.isInteger(
-                organizationId
-            )
-        ) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title:
-                        "Organization Not Found",
-
-                    error: {
-                        message:
-                            "The requested organization does not exist."
-                    }
-                }
-            );
-        }
 
         const organization =
             await getOrganizationById(
                 organizationId
             );
 
-        console.log(
-            "ORGANIZATION FOR EDIT:",
-            organization
-        );
-
         if (!organization) {
             return res.status(404).render(
                 "errors/error",
                 {
-                    title:
-                        "Organization Not Found",
-
+                    title: "Organization Not Found",
                     error: {
                         message:
-                            "The requested organization does not exist."
+                            "The requested organization could not be found."
                     }
                 }
             );
@@ -266,130 +205,98 @@ const showEditOrganizationPage = async (
                 errors: []
             }
         );
-    } catch (error) {
-        console.error(
-            "SHOW EDIT ERROR:",
-            error
-        );
 
+    } catch (error) {
         next(error);
     }
 };
 
 
-/* =========================================================
-   UPDATE ORGANIZATION
-========================================================= */
+const updateOrganizationController =
+    async (
+        req,
+        res,
+        next
+    ) => {
 
-const updateOrganizationController = async (
-    req,
-    res,
-    next
-) => {
-    try {
-        const organizationId =
-            Number(req.params.id);
+        try {
 
-        console.log(
-            "POST EDIT ID:",
-            organizationId
-        );
+            const organizationId =
+                Number(req.params.id);
 
-        console.log(
-            "EDIT FORM DATA:",
-            req.body
-        );
+            const errors =
+                validationResult(req);
 
-        if (
-            !Number.isInteger(
-                organizationId
-            )
-        ) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title:
-                        "Organization Not Found",
+            const existingOrganization =
+                await getOrganizationById(
+                    organizationId
+                );
 
-                    error: {
-                        message:
-                            "The requested organization does not exist."
+            if (!existingOrganization) {
+                return res.status(404).render(
+                    "errors/error",
+                    {
+                        title:
+                            "Organization Not Found",
+                        error: {
+                            message:
+                                "The requested organization could not be found."
+                        }
                     }
-                }
-            );
-        }
+                );
+            }
 
-        const errors =
-            validateOrganization(
-                req.body
-            );
+            const organization = {
+                organization_name:
+                    req.body.organization_name,
+                description:
+                    req.body.description,
+                website:
+                    req.body.website,
+                contact_email:
+                    req.body.contact_email,
+                phone:
+                    req.body.phone,
+                location:
+                    req.body.location,
+                image:
+                    existingOrganization.image
+            };
 
-        if (errors.length > 0) {
-            return res.status(400).render(
-                "edit-organization",
-                {
-                    title:
-                        "Edit Organization",
+            if (!errors.isEmpty()) {
 
-                    organization: {
-                        ...req.body,
-                        organization_id:
-                            organizationId
-                    },
-
-                    errors
-                }
-            );
-        }
-
-        const updated =
-            await updateOrganization(
-                organizationId,
-                req.body
-            );
-
-        console.log(
-            "UPDATED ORGANIZATION:",
-            updated
-        );
-
-        if (!updated) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title:
-                        "Organization Not Found",
-
-                    error: {
-                        message:
-                            "The organization could not be updated."
+                return res.status(400).render(
+                    "edit-organization",
+                    {
+                        title:
+                            "Edit Organization",
+                        organization,
+                        errors:
+                            errors.array()
                     }
-                }
+                );
+            }
+
+            const updatedOrganization =
+                await updateOrganization(
+                    organizationId,
+                    organization
+                );
+
+            req.flash(
+                "success",
+                `Organization "${updatedOrganization.organization_name}" was updated successfully.`
             );
+
+            res.redirect(
+                `/organization/${updatedOrganization.organization_id}`
+            );
+
+        } catch (error) {
+            next(error);
         }
+    };
 
-        req.flash(
-            "success",
-            "Organization updated successfully."
-        );
-
-        res.redirect(
-            `/organization/${organizationId}`
-        );
-    } catch (error) {
-        console.error(
-            "UPDATE ORGANIZATION ERROR:",
-            error
-        );
-
-        next(error);
-    }
-};
-
-
-/* =========================================================
-   EXPORTS
-========================================================= */
 
 export {
     showOrganizationsPage,

@@ -1,158 +1,26 @@
-import express from "express";
+<% if (success && success.length > 0) { %>
 
-import {
-    showHomePage
-} from "./controllers/index.js";
+    <div
+        class="flash-message flash-success"
+        role="status"
+    >
+        <% success.forEach((message) => { %>
+            <p><%= message %></p>
+        <% }); %>
+    </div>
 
-import {
-    showOrganizationsPage,
-    showOrganizationDetailsPage,
-    showCreateOrganizationPage,
-    createOrganizationAction,
-    showEditOrganizationPage,
-    updateOrganizationAction
-} from "./controllers/organizations.js";
-
-import {
-    showProjectsPage,
-    showProjectDetailsPage,
-    showCreateProjectPage,
-    createProjectAction,
-    showEditProjectPage,
-    updateProjectAction,
-    showAssignCategoriesPage,
-    updateAssignedCategories
-} from "./controllers/projects.js";
-
-import {
-    showCategoriesPage,
-    showCategoryDetailsPage,
-    showCreateCategoryPage,
-    createCategoryAction,
-    showEditCategoryPage,
-    updateCategoryAction
-} from "./controllers/categories.js";
+<% } %>
 
 
-const router = express.Router();
+<% if (error && error.length > 0) { %>
 
+    <div
+        class="flash-message flash-error"
+        role="alert"
+    >
+        <% error.forEach((message) => { %>
+            <p><%= message %></p>
+        <% }); %>
+    </div>
 
-/* ---------------------------------------------------------
-   HOME
---------------------------------------------------------- */
-
-router.get("/", showHomePage);
-
-
-/* ---------------------------------------------------------
-   ORGANIZATIONS
---------------------------------------------------------- */
-
-router.get("/organizations", showOrganizationsPage);
-
-router.get(
-    "/organization/:id",
-    showOrganizationDetailsPage
-);
-
-router.get(
-    "/new-organization",
-    showCreateOrganizationPage
-);
-
-router.post(
-    "/new-organization",
-    createOrganizationAction
-);
-
-router.get(
-    "/edit-organization/:id",
-    showEditOrganizationPage
-);
-
-router.post(
-    "/edit-organization/:id",
-    updateOrganizationAction
-);
-
-
-/* ---------------------------------------------------------
-   PROJECTS
---------------------------------------------------------- */
-
-router.get("/projects", showProjectsPage);
-
-router.get(
-    "/project/:id",
-    showProjectDetailsPage
-);
-
-router.get(
-    "/new-project",
-    showCreateProjectPage
-);
-
-router.post(
-    "/new-project",
-    createProjectAction
-);
-
-router.get(
-    "/edit-project/:id",
-    showEditProjectPage
-);
-
-router.post(
-    "/edit-project/:id",
-    updateProjectAction
-);
-
-
-/* ---------------------------------------------------------
-   PROJECT CATEGORY ASSIGNMENT
---------------------------------------------------------- */
-
-router.get(
-    "/project/:id/categories",
-    showAssignCategoriesPage
-);
-
-router.post(
-    "/project/:id/categories",
-    updateAssignedCategories
-);
-
-
-/* ---------------------------------------------------------
-   CATEGORIES
---------------------------------------------------------- */
-
-router.get("/categories", showCategoriesPage);
-
-router.get(
-    "/category/:id",
-    showCategoryDetailsPage
-);
-
-router.get(
-    "/new-category",
-    showCreateCategoryPage
-);
-
-router.post(
-    "/new-category",
-    createCategoryAction
-);
-
-router.get(
-    "/edit-category/:id",
-    showEditCategoryPage
-);
-
-router.post(
-    "/edit-category/:id",
-    updateCategoryAction
-);
-
-
-export default router;
+<% } %>

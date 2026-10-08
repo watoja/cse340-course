@@ -1,8 +1,10 @@
 import express from "express";
 
+
 import {
     showHomePage
 } from "./controllers/index.js";
+
 
 import {
     showOrganizationsPage,
@@ -12,6 +14,7 @@ import {
     showEditOrganizationPage,
     updateOrganizationController
 } from "./controllers/organizations.js";
+
 
 import {
     showProjectsPage,
@@ -24,6 +27,7 @@ import {
     updateAssignedCategories
 } from "./controllers/projects.js";
 
+
 import {
     showCategoriesPage,
     showCategoryDetailsPage,
@@ -34,12 +38,15 @@ import {
 } from "./controllers/categories.js";
 
 
+import {
+    validateOrganization,
+    validateProject,
+    validateCategory
+} from "./middleware/validation.js";
+
+
 const router = express.Router();
 
-
-/* =========================================================
-   HOME
-========================================================= */
 
 router.get(
     "/",
@@ -47,9 +54,9 @@ router.get(
 );
 
 
-/* =========================================================
-   ORGANIZATIONS
-========================================================= */
+/*
+ * Organizations
+ */
 
 router.get(
     "/organizations",
@@ -63,6 +70,7 @@ router.get(
 
 router.post(
     "/organization/create",
+    validateOrganization,
     createOrganizationController
 );
 
@@ -73,6 +81,7 @@ router.get(
 
 router.post(
     "/organization/:id/edit",
+    validateOrganization,
     updateOrganizationController
 );
 
@@ -82,9 +91,9 @@ router.get(
 );
 
 
-/* =========================================================
-   PROJECTS
-========================================================= */
+/*
+ * Projects
+ */
 
 router.get(
     "/projects",
@@ -98,6 +107,7 @@ router.get(
 
 router.post(
     "/project/create",
+    validateProject,
     createProjectAction
 );
 
@@ -108,6 +118,7 @@ router.get(
 
 router.post(
     "/project/:id/edit",
+    validateProject,
     updateProjectAction
 );
 
@@ -127,9 +138,9 @@ router.get(
 );
 
 
-/* =========================================================
-   CATEGORIES
-========================================================= */
+/*
+ * Categories
+ */
 
 router.get(
     "/categories",
@@ -143,6 +154,7 @@ router.get(
 
 router.post(
     "/category/create",
+    validateCategory,
     createCategoryController
 );
 
@@ -153,6 +165,7 @@ router.get(
 
 router.post(
     "/category/:id/edit",
+    validateCategory,
     updateCategoryController
 );
 

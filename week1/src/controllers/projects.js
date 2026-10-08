@@ -1,6 +1,12 @@
 import {
+    validationResult
+} from "express-validator";
+
+import {
+    getAllProjects,
     getUpcomingProjects,
     getProjectDetails,
+    getProjectCategoriesById,
     createProject,
     updateProject,
     getProjectOrganizations,
@@ -9,41 +15,46 @@ import {
     updateProjectCategories
 } from "../models/projects.js";
 
-import {
-    validateProject
-} from "../utils/validation.js";
+
+const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
 
-/* SHOW PROJECTS PAGE */
 const showProjectsPage = async (
     req,
     res,
     next
 ) => {
+
     try {
+
         const projects =
-            await getUpcomingProjects(5);
+            await getUpcomingProjects(
+                NUMBER_OF_UPCOMING_PROJECTS
+            );
 
         res.render(
             "projects",
             {
-                title: "Upcoming Service Projects",
+                title:
+                    "Upcoming Service Projects",
                 projects
             }
         );
+
     } catch (error) {
         next(error);
     }
 };
 
 
-/* SHOW PROJECT DETAILS */
 const showProjectDetailsPage = async (
     req,
     res,
     next
 ) => {
+
     try {
+
         const projectId =
             Number(req.params.id);
 
@@ -54,10 +65,11 @@ const showProjectDetailsPage = async (
             return res.status(404).render(
                 "errors/error",
                 {
-                    title: "Project Not Found",
+                    title:
+                        "Project Not Found",
                     error: {
                         message:
-                            "The requested project does not exist."
+                            "The requested project could not be found."
                     }
                 }
             );
@@ -72,174 +84,154 @@ const showProjectDetailsPage = async (
             return res.status(404).render(
                 "errors/error",
                 {
-                    title: "Project Not Found",
+                    title:
+                        "Project Not Found",
                     error: {
                         message:
-                            "The requested project does not exist."
+                            "The requested project could not be found."
                     }
                 }
             );
         }
 
+        const categories =
+            await getProjectCategoriesById(
+                projectId
+            );
+
         res.render(
             "project-details",
             {
-                title: project.project_name,
-                project
+                title:
+                    project.project_name,
+                project,
+                categories
             }
         );
+
     } catch (error) {
         next(error);
     }
 };
 
 
-/* SHOW CREATE PROJECT PAGE */
 const showCreateProjectPage = async (
     req,
     res,
     next
 ) => {
+
     try {
+
         const organizations =
             await getProjectOrganizations();
 
         res.render(
             "new-project",
             {
-                title: "Add Project",
-                project: {
-                    project_name: "",
-                    description: "",
-                    project_date: "",
-                    location: "",
-                    volunteers_needed: "",
-                    organization_id: ""
-                },
+                title:
+                    "Create Project",
+                project: {},
                 organizations,
                 errors: []
             }
         );
+
     } catch (error) {
         next(error);
     }
 };
 
 
-/* CREATE PROJECT */
 const createProjectAction = async (
     req,
     res,
     next
 ) => {
-    try {
-        console.log(
-            "POST /project/create received"
-        );
 
-        console.log(
-            "PROJECT FORM DATA:",
-            req.body
-        );
+    try {
 
         const errors =
-            validateProject(
-                req.body
-            );
+            validationResult(req);
 
-        if (errors.length > 0) {
+        const project = {
+            project_name:
+                req.body.project_name,
+            description:
+                req.body.description,
+            project_date:
+                req.body.project_date,
+            location:
+                req.body.location,
+            volunteers_needed:
+                req.body.volunteers_needed,
+            organization_id:
+                req.body.organization_id
+        };
+
+        if (!errors.isEmpty()) {
+
             const organizations =
                 await getProjectOrganizations();
 
             return res.status(400).render(
                 "new-project",
                 {
-                    title: "Add Project",
-                    project: req.body,
+                    title:
+                        "Create Project",
+                    project,
                     organizations,
-                    errors
+                    errors:
+                        errors.array()
                 }
             );
         }
 
-        const project =
+        const createdProject =
             await createProject(
-                req.body
+                project
             );
-
-        console.log(
-            "PROJECT DATABASE RESULT:",
-            project
-        );
 
         req.flash(
             "success",
-            "Project created successfully."
+            `Project "${createdProject.project_name}" was created successfully.`
         );
 
         res.redirect(
-            `/project/${project.project_id}`
-        );
-    } catch (error) {
-        console.error(
-            "CREATE PROJECT ERROR:",
-            error
+            `/project/${createdProject.project_id}`
         );
 
+    } catch (error) {
         next(error);
     }
 };
 
 
-/* SHOW EDIT PROJECT PAGE */
 const showEditProjectPage = async (
     req,
     res,
     next
 ) => {
+
     try {
+
         const projectId =
             Number(req.params.id);
-
-        console.log(
-            "GET EDIT PROJECT ID:",
-            projectId
-        );
-
-        if (
-            !Number.isInteger(projectId) ||
-            projectId < 1
-        ) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title: "Project Not Found",
-                    error: {
-                        message:
-                            "The requested project does not exist."
-                    }
-                }
-            );
-        }
 
         const project =
             await getProjectDetails(
                 projectId
             );
 
-        console.log(
-            "PROJECT FOR EDIT:",
-            project
-        );
-
         if (!project) {
             return res.status(404).render(
                 "errors/error",
                 {
-                    title: "Project Not Found",
+                    title:
+                        "Project Not Found",
                     error: {
                         message:
-                            "The requested project does not exist."
+                            "The requested project could not be found."
                     }
                 }
             );
@@ -251,101 +243,84 @@ const showEditProjectPage = async (
         res.render(
             "edit-project",
             {
-                title: "Edit Project",
+                title:
+                    "Edit Project",
                 project,
                 organizations,
                 errors: []
             }
         );
-    } catch (error) {
-        console.error(
-            "SHOW EDIT PROJECT ERROR:",
-            error
-        );
 
+    } catch (error) {
         next(error);
     }
 };
 
 
-/* UPDATE PROJECT */
 const updateProjectAction = async (
     req,
     res,
     next
 ) => {
+
     try {
+
         const projectId =
             Number(req.params.id);
 
-        console.log(
-            "POST EDIT PROJECT ID:",
-            projectId
-        );
-
-        console.log(
-            "PROJECT EDIT FORM DATA:",
-            req.body
-        );
-
-        if (
-            !Number.isInteger(projectId) ||
-            projectId < 1
-        ) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title: "Project Not Found",
-                    error: {
-                        message:
-                            "The requested project does not exist."
-                    }
-                }
-            );
-        }
-
         const errors =
-            validateProject(
-                req.body
-            );
+            validationResult(req);
 
-        if (errors.length > 0) {
+        const project = {
+            project_id:
+                projectId,
+            project_name:
+                req.body.project_name,
+            description:
+                req.body.description,
+            project_date:
+                req.body.project_date,
+            location:
+                req.body.location,
+            volunteers_needed:
+                req.body.volunteers_needed,
+            organization_id:
+                req.body.organization_id
+        };
+
+        if (!errors.isEmpty()) {
+
             const organizations =
                 await getProjectOrganizations();
 
             return res.status(400).render(
                 "edit-project",
                 {
-                    title: "Edit Project",
-                    project: {
-                        ...req.body,
-                        project_id: projectId
-                    },
+                    title:
+                        "Edit Project",
+                    project,
                     organizations,
-                    errors
+                    errors:
+                        errors.array()
                 }
             );
         }
 
-        const updated =
+        const updatedProject =
             await updateProject(
                 projectId,
-                req.body
+                project
             );
 
-        console.log(
-            "UPDATED PROJECT:",
-            updated
-        );
-
-        if (!updated) {
+        if (!updatedProject) {
             return res.status(404).render(
                 "errors/error",
                 {
-                    title: "Project Not Found",
+                    title:
+                        "Project Not Found",
                     error: {
                         message:
-                            "The project could not be updated."
+                            "The requested project could not be found."
                     }
                 }
             );
@@ -353,231 +328,137 @@ const updateProjectAction = async (
 
         req.flash(
             "success",
-            "Project updated successfully."
+            `Project "${updatedProject.project_name}" was updated successfully.`
         );
 
         res.redirect(
-            `/project/${projectId}`
-        );
-    } catch (error) {
-        console.error(
-            "UPDATE PROJECT ERROR:",
-            error
+            `/project/${updatedProject.project_id}`
         );
 
+    } catch (error) {
         next(error);
     }
 };
 
 
-/* SHOW ASSIGN CATEGORIES PAGE */
-const showAssignCategoriesPage = async (
-    req,
-    res,
-    next
-) => {
-    try {
-        const projectId =
-            Number(req.params.id);
+const showAssignCategoriesPage =
+    async (
+        req,
+        res,
+        next
+    ) => {
 
-        console.log(
-            "ASSIGN CATEGORIES PROJECT ID:",
-            projectId
-        );
+        try {
 
-        if (
-            !Number.isInteger(projectId) ||
-            projectId < 1
-        ) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title: "Project Not Found",
-                    error: {
-                        message:
-                            "The requested project does not exist."
-                    }
-                }
-            );
-        }
+            const projectId =
+                Number(req.params.id);
 
-        const project =
-            await getProjectDetails(
-                projectId
-            );
-
-        console.log(
-            "ASSIGN CATEGORIES PROJECT:",
-            project
-        );
-
-        if (!project) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title: "Project Not Found",
-                    error: {
-                        message:
-                            "The requested project does not exist."
-                    }
-                }
-            );
-        }
-
-        const categories =
-            await getProjectCategories();
-
-        console.log(
-            "ALL CATEGORIES:",
-            categories
-        );
-
-        const assignedCategories =
-            await getAssignedCategories(
-                projectId
-            );
-
-        console.log(
-            "ASSIGNED CATEGORIES:",
-            assignedCategories
-        );
-
-        const assignedCategoryIds =
-            assignedCategories.map(
-                (category) =>
-                    Number(category.category_id)
-            );
-
-        console.log(
-            "ASSIGNED CATEGORY IDS:",
-            assignedCategoryIds
-        );
-
-        res.render(
-            "assign-categories",
-            {
-                title:
-                    "Assign Project Categories",
-                project,
-                categories,
-                assignedCategoryIds,
-                errors: []
-            }
-        );
-    } catch (error) {
-        console.error(
-            "SHOW ASSIGN CATEGORIES ERROR:",
-            error
-        );
-
-        next(error);
-    }
-};
-
-
-/* UPDATE ASSIGNED CATEGORIES */
-const updateAssignedCategories = async (
-    req,
-    res,
-    next
-) => {
-    try {
-        const projectId =
-            Number(req.params.id);
-
-        console.log(
-            "UPDATE CATEGORY PROJECT ID:",
-            projectId
-        );
-
-        console.log(
-            "CATEGORY FORM DATA:",
-            req.body
-        );
-
-        if (
-            !Number.isInteger(projectId) ||
-            projectId < 1
-        ) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title: "Project Not Found",
-                    error: {
-                        message:
-                            "The requested project does not exist."
-                    }
-                }
-            );
-        }
-
-        const project =
-            await getProjectDetails(
-                projectId
-            );
-
-        if (!project) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title: "Project Not Found",
-                    error: {
-                        message:
-                            "The requested project does not exist."
-                    }
-                }
-            );
-        }
-
-        let categoryIds =
-            req.body.category_ids || [];
-
-        if (
-            !Array.isArray(categoryIds)
-        ) {
-            categoryIds = [
-                categoryIds
-            ];
-        }
-
-        categoryIds =
-            categoryIds
-                .map(
-                    (id) => Number(id)
-                )
-                .filter(
-                    (id) =>
-                        Number.isInteger(id) &&
-                        id > 0
+            const project =
+                await getProjectDetails(
+                    projectId
                 );
 
-        console.log(
-            "CATEGORY IDS TO SAVE:",
-            categoryIds
-        );
+            if (!project) {
+                return res.status(404).render(
+                    "errors/error",
+                    {
+                        title:
+                            "Project Not Found",
+                        error: {
+                            message:
+                                "The requested project could not be found."
+                        }
+                    }
+                );
+            }
 
-        await updateProjectCategories(
-            projectId,
-            categoryIds
-        );
+            const categories =
+                await getProjectCategories();
 
-        req.flash(
-            "success",
-            "Project categories updated successfully."
-        );
+            const assignedCategories =
+                await getAssignedCategories(
+                    projectId
+                );
 
-        res.redirect(
-            `/project/${projectId}`
-        );
-    } catch (error) {
-        console.error(
-            "UPDATE PROJECT CATEGORIES ERROR:",
-            error
-        );
+            const assignedCategoryIds =
+                assignedCategories.map(
+                    (category) =>
+                        Number(
+                            category.category_id
+                        )
+                );
 
-        next(error);
-    }
-};
+            res.render(
+                "assign-categories",
+                {
+                    title:
+                        "Assign Categories",
+                    project,
+                    categories,
+                    assignedCategoryIds,
+                    errors: []
+                }
+            );
+
+        } catch (error) {
+            next(error);
+        }
+    };
+
+
+const updateAssignedCategories =
+    async (
+        req,
+        res,
+        next
+    ) => {
+
+        try {
+
+            const projectId =
+                Number(req.params.id);
+
+            let categoryIds =
+                req.body.category_ids || [];
+
+            if (
+                !Array.isArray(categoryIds)
+            ) {
+                categoryIds = [
+                    categoryIds
+                ];
+            }
+
+            categoryIds =
+                categoryIds.map(
+                    (categoryId) =>
+                        Number(categoryId)
+                ).filter(
+                    (categoryId) =>
+                        Number.isInteger(
+                            categoryId
+                        ) &&
+                        categoryId > 0
+                );
+
+            await updateProjectCategories(
+                projectId,
+                categoryIds
+            );
+
+            req.flash(
+                "success",
+                "Project categories were updated successfully."
+            );
+
+            res.redirect(
+                `/project/${projectId}`
+            );
+
+        } catch (error) {
+            next(error);
+        }
+    };
 
 
 export {

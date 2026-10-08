@@ -3,23 +3,10 @@
 <main>
     <div class="main-content">
 
-        <section class="page-header">
-
-            <h1>
-                <%= project.project_name %>
-            </h1>
-
-            <p>
-                Service project details
-            </p>
-
-        </section>
-
-
         <% if (success && success.length > 0) { %>
 
             <div
-                class="success-message"
+                class="form-success"
                 role="status"
             >
 
@@ -34,6 +21,19 @@
             </div>
 
         <% } %>
+
+
+        <section class="page-header">
+
+            <h1>
+                <%= project.project_name %>
+            </h1>
+
+            <p>
+                Community service project details.
+            </p>
+
+        </section>
 
 
         <section class="project-details">
@@ -52,59 +52,106 @@
                     </p>
 
 
-                    <p>
-                        <strong>
-                            Date:
-                        </strong>
+                    <div class="project-information">
 
-                        <%= new Date(project.project_date).toLocaleDateString() %>
-                    </p>
+                        <p>
+                            <strong>
+                                Date:
+                            </strong>
 
-
-                    <p>
-                        <strong>
-                            Location:
-                        </strong>
-
-                        <%= project.location %>
-                    </p>
+                            <%= new Date(
+                                project.project_date
+                            ).toLocaleDateString() %>
+                        </p>
 
 
-                    <p>
-                        <strong>
-                            Volunteers Needed:
-                        </strong>
+                        <p>
+                            <strong>
+                                Location:
+                            </strong>
 
-                        <%= project.volunteers_needed %>
-                    </p>
+                            <%= project.location %>
+                        </p>
 
 
-                    <% if (project.organization_name) { %>
+                        <p>
+                            <strong>
+                                Volunteers Needed:
+                            </strong>
+
+                            <%= project.volunteers_needed %>
+                        </p>
+
 
                         <p>
                             <strong>
                                 Organization:
                             </strong>
 
-                            <a
-                                href="/organization/<%= project.organization_id %>"
-                            >
-                                <%= project.organization_name %>
-                            </a>
+                            <% if (project.organization_id) { %>
+
+                                <a
+                                    href="/organization/<%= project.organization_id %>"
+                                >
+                                    <%= project.organization_name %>
+                                </a>
+
+                            <% } else { %>
+
+                                Not assigned
+
+                            <% } %>
+
                         </p>
 
-                    <% } %>
+                    </div>
+
+
+                    <section class="project-categories">
+
+                        <h3>
+                            Assigned Categories
+                        </h3>
+
+                        <% if (
+                            categories &&
+                            categories.length > 0
+                        ) { %>
+
+                            <ul class="category-list">
+
+                                <% categories.forEach(
+                                    (category) => {
+                                %>
+
+                                    <li>
+                                        <%= category.category_name %>
+                                    </li>
+
+                                <% }); %>
+
+                            </ul>
+
+                        <% } else { %>
+
+                            <p>
+                                No categories have been
+                                assigned to this project.
+                            </p>
+
+                        <% } %>
+
+                    </section>
 
 
                     <div class="form-actions">
 
                         <a
                             href="/project/<%= project.project_id %>/edit"
-                            class="button btn-primary"
+                            class="button"
                         >
                             Edit Project
                         </a>
-
 
                         <a
                             href="/project/<%= project.project_id %>/categories"
@@ -112,7 +159,6 @@
                         >
                             Assign Categories
                         </a>
-
 
                         <a
                             href="/projects"

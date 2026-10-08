@@ -1,17 +1,16 @@
 import {
-    getAllCategories,
-    getCategoryById,
-    getProjectsByCategoryId,
-    createCategory,
-    updateCategory
-} from "../models/categories.js";
+    validationResult
+} from "express-validator";
 
 import {
-    validateCategory
-} from "../utils/validation.js";
+    getAllCategories,
+    getCategoryById,
+    createCategory,
+    updateCategory,
+    getProjectsByCategoryId
+} from "../models/categories.js";
 
 
-/* SHOW CATEGORIES PAGE */
 const showCategoriesPage = async (
     req,
     res,
@@ -24,7 +23,7 @@ const showCategoriesPage = async (
         res.render(
             "categories",
             {
-                title: "Service Categories",
+                title: "Categories",
                 categories
             }
         );
@@ -34,7 +33,6 @@ const showCategoriesPage = async (
 };
 
 
-/* SHOW CATEGORY DETAILS */
 const showCategoryDetailsPage = async (
     req,
     res,
@@ -44,36 +42,10 @@ const showCategoryDetailsPage = async (
         const categoryId =
             Number(req.params.id);
 
-        console.log(
-            "GET CATEGORY DETAILS ID:",
-            categoryId
-        );
-
-        if (
-            !Number.isInteger(categoryId) ||
-            categoryId < 1
-        ) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title: "Category Not Found",
-                    error: {
-                        message:
-                            "The requested category does not exist."
-                    }
-                }
-            );
-        }
-
         const category =
             await getCategoryById(
                 categoryId
             );
-
-        console.log(
-            "CATEGORY DETAILS:",
-            category
-        );
 
         if (!category) {
             return res.status(404).render(
@@ -82,7 +54,7 @@ const showCategoryDetailsPage = async (
                     title: "Category Not Found",
                     error: {
                         message:
-                            "The requested category does not exist."
+                            "The category could not be found."
                     }
                 }
             );
@@ -92,11 +64,6 @@ const showCategoryDetailsPage = async (
             await getProjectsByCategoryId(
                 categoryId
             );
-
-        console.log(
-            "CATEGORY PROJECTS:",
-            projects
-        );
 
         res.render(
             "category-details",
@@ -108,76 +75,56 @@ const showCategoryDetailsPage = async (
             }
         );
     } catch (error) {
-        console.error(
-            "SHOW CATEGORY DETAILS ERROR:",
-            error
-        );
-
         next(error);
     }
 };
 
 
-/* SHOW CREATE CATEGORY PAGE */
-const showCreateCategoryPage = async (
+const showCreateCategoryPage = (
     req,
-    res,
-    next
+    res
 ) => {
-    try {
-        res.render(
-            "new-category",
-            {
-                title: "Add Category",
-                category: {
-                    category_name: "",
-                    description: ""
-                },
-                errors: []
-            }
-        );
-    } catch (error) {
-        next(error);
-    }
+    res.render(
+        "new-category",
+        {
+            title: "Create Category",
+            category: {},
+            errors: []
+        }
+    );
 };
 
 
-/* CREATE CATEGORY */
 const createCategoryController = async (
     req,
     res,
     next
 ) => {
     try {
-        console.log(
-            "CATEGORY FORM DATA:",
-            req.body
-        );
-
         const errors =
-            validateCategory(
-                req.body
-            );
+            validationResult(req);
 
-        if (errors.length > 0) {
-
+        if (!errors.isEmpty()) {
             return res.status(400).render(
                 "new-category",
                 {
-                    title: "Add Category",
+                    title: "Create Category",
                     category: req.body,
-                    errors
+                    errors:
+                        errors.array()
                 }
             );
         }
 
-        const category =
-            await createCategory(
-                req.body
-            );
+        const category = {
+            category_name:
+                req.body.category_name,
 
-        console.log(
-            "CATEGORY DATABASE RESULT:",
+            description:
+                req.body.description
+        };
+
+        await createCategory(
             category
         );
 
@@ -187,44 +134,14 @@ const createCategoryController = async (
         );
 
         res.redirect(
-            `/category/${category.category_id}`
+            "/categories"
         );
-
     } catch (error) {
-
-        console.error(
-            "CREATE CATEGORY ERROR:",
-            error
-        );
-
-        /*
-         * PostgreSQL error 23505 means
-         * a UNIQUE value already exists.
-         */
-        if (
-            error.code === "23505" &&
-            error.constraint ===
-                "category_category_name_key"
-        ) {
-
-            return res.status(400).render(
-                "new-category",
-                {
-                    title: "Add Category",
-                    category: req.body,
-                    errors: [
-                        "A category with this name already exists. Please choose a different category name."
-                    ]
-                }
-            );
-        }
-
         next(error);
     }
 };
 
 
-/* SHOW EDIT CATEGORY PAGE */
 const showEditCategoryPage = async (
     req,
     res,
@@ -234,36 +151,10 @@ const showEditCategoryPage = async (
         const categoryId =
             Number(req.params.id);
 
-        console.log(
-            "GET EDIT CATEGORY ID:",
-            categoryId
-        );
-
-        if (
-            !Number.isInteger(categoryId) ||
-            categoryId < 1
-        ) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title: "Category Not Found",
-                    error: {
-                        message:
-                            "The requested category does not exist."
-                    }
-                }
-            );
-        }
-
         const category =
             await getCategoryById(
                 categoryId
             );
-
-        console.log(
-            "CATEGORY FOR EDIT:",
-            category
-        );
 
         if (!category) {
             return res.status(404).render(
@@ -272,7 +163,7 @@ const showEditCategoryPage = async (
                     title: "Category Not Found",
                     error: {
                         message:
-                            "The requested category does not exist."
+                            "The category could not be found."
                     }
                 }
             );
@@ -286,20 +177,12 @@ const showEditCategoryPage = async (
                 errors: []
             }
         );
-
     } catch (error) {
-
-        console.error(
-            "SHOW EDIT CATEGORY ERROR:",
-            error
-        );
-
         next(error);
     }
 };
 
 
-/* UPDATE CATEGORY */
 const updateCategoryController = async (
     req,
     res,
@@ -309,75 +192,62 @@ const updateCategoryController = async (
         const categoryId =
             Number(req.params.id);
 
-        console.log(
-            "POST EDIT CATEGORY ID:",
-            categoryId
-        );
-
-        console.log(
-            "CATEGORY EDIT FORM DATA:",
-            req.body
-        );
-
-        if (
-            !Number.isInteger(categoryId) ||
-            categoryId < 1
-        ) {
-            return res.status(404).render(
-                "errors/error",
-                {
-                    title: "Category Not Found",
-                    error: {
-                        message:
-                            "The requested category does not exist."
-                    }
-                }
-            );
-        }
-
         const errors =
-            validateCategory(
-                req.body
-            );
+            validationResult(req);
 
-        if (errors.length > 0) {
+        if (!errors.isEmpty()) {
+            const category = {
+                category_id:
+                    categoryId,
+
+                category_name:
+                    req.body.category_name,
+
+                description:
+                    req.body.description
+            };
 
             return res.status(400).render(
                 "edit-category",
                 {
                     title: "Edit Category",
-                    category: {
-                        ...req.body,
-                        category_id: categoryId
-                    },
-                    errors
+                    category,
+                    errors:
+                        errors.array()
                 }
             );
         }
 
-        const updated =
-            await updateCategory(
-                categoryId,
-                req.body
+        const existingCategory =
+            await getCategoryById(
+                categoryId
             );
 
-        console.log(
-            "UPDATED CATEGORY:",
-            updated
-        );
-
-        if (!updated) {
+        if (!existingCategory) {
             return res.status(404).render(
                 "errors/error",
                 {
                     title: "Category Not Found",
                     error: {
                         message:
-                            "The category could not be updated."
+                            "The category could not be found."
                     }
                 }
             );
         }
+
+        const category = {
+            category_name:
+                req.body.category_name,
+
+            description:
+                req.body.description
+        };
+
+        await updateCategory(
+            categoryId,
+            category
+        );
 
         req.flash(
             "success",
@@ -387,39 +257,7 @@ const updateCategoryController = async (
         res.redirect(
             `/category/${categoryId}`
         );
-
     } catch (error) {
-
-        console.error(
-            "UPDATE CATEGORY ERROR:",
-            error
-        );
-
-        /*
-         * Handle duplicate category names
-         * during editing.
-         */
-        if (
-            error.code === "23505" &&
-            error.constraint ===
-                "category_category_name_key"
-        ) {
-
-            return res.status(400).render(
-                "edit-category",
-                {
-                    title: "Edit Category",
-                    category: {
-                        ...req.body,
-                        category_id: categoryId
-                    },
-                    errors: [
-                        "A category with this name already exists. Please choose a different category name."
-                    ]
-                }
-            );
-        }
-
         next(error);
     }
 };

@@ -1,98 +1,44 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        <%= title %> | Community Service Projects
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="/css/styles.css"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore community service organizations, volunteer projects, and opportunities to make a difference.">
+    <title><%= title %> | Community Service Projects</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/navigation.js" defer></script>
 </head>
-
 <body>
+    <header class="site-header">
+        <div class="header-container">
+            <a href="/" class="site-logo">Community Service Projects</a>
 
-<header class="site-header">
+            <button
+                id="menuButton"
+                class="hamburger"
+                type="button"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="mainNavigation"
+            >
+                <span aria-hidden="true">☰</span>
+            </button>
 
-    <div class="header-container">
+            <nav id="mainNavigation" class="navigation" aria-label="Main navigation">
+                <a href="/">Home</a>
+                <a href="/organizations">Organizations</a>
+                <a href="/projects">Projects</a>
+                <a href="/categories">Categories</a>
 
-        <a
-            href="/"
-            class="site-logo"
-        >
-            Community Service Projects
-        </a>
+                <% if (isLoggedIn) { %>
+                    <a href="/dashboard">My Dashboard</a>
+                    <a href="/logout">Logout</a>
+                <% } else { %>
+                    <a href="/register">Register</a>
+                    <a href="/login">Login</a>
+                <% } %>
+            </nav>
+        </div>
+    </header>
 
-
-        <button
-            id="menuButton"
-            class="hamburger"
-            type="button"
-            aria-label="Open navigation menu"
-            aria-expanded="false"
-            aria-controls="mainNavigation"
-        >
-            ☰
-        </button>
-
-
-        <nav
-            id="mainNavigation"
-            class="navigation"
-        >
-
-            <a href="/">
-                Home
-            </a>
-
-            <a href="/organizations">
-                Organizations
-            </a>
-
-            <a href="/projects">
-                Projects
-            </a>
-
-            <a href="/categories">
-                Categories
-            </a>
-
-
-            <% if (isLoggedIn) { %>
-
-                <a href="/dashboard">
-                    My Dashboard
-                </a>
-
-                <a href="/logout">
-                    Logout
-                </a>
-
-            <% } else { %>
-
-                <a href="/register">
-                    Register
-                </a>
-
-                <a href="/login">
-                    Login
-                </a>
-
-            <% } %>
-
-        </nav>
-
-    </div>
-
-</header>
-
-
-<main class="main-content">

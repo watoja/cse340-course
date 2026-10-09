@@ -1,3 +1,4 @@
+
 import bcrypt from "bcrypt";
 
 import {
@@ -40,19 +41,14 @@ const processUserRegistrationForm = async (
         password
     } = req.body;
 
-
     try {
 
-        const salt =
-            await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt(10);
 
-
-        const passwordHash =
-            await bcrypt.hash(
-                password,
-                salt
-            );
-
+        const passwordHash = await bcrypt.hash(
+            password,
+            salt
+        );
 
         await createUser(
             name,
@@ -60,35 +56,28 @@ const processUserRegistrationForm = async (
             passwordHash
         );
 
-
         req.flash(
             "success",
             "Registration successful. You can now log in."
         );
 
-
-        res.redirect(
-            "/login"
-        );
+        return res.redirect("/login");
 
     } catch (error) {
 
         console.error(
             "Error registering user:",
-            error
+            error.message
         );
 
-
-        res.status(500).render(
+        return res.status(500).render(
             "register",
             {
                 title: "Register",
-
                 error:
                     "An error occurred during registration. Please try again."
             }
         );
-
     }
 };
 
@@ -125,76 +114,104 @@ const processLoginForm = async (
         password
     } = req.body;
 
-
     try {
 
-        const user =
-            await authenticateUser(
-                email,
-                password
+        const user = await authenticateUser(
+            email,
+            password
+        );
+
+        if (!user) {
+
+            console.log(
+                "LOGIN: Authentication failed."
             );
-
-
-        if (user) {
-
-            req.session.user = user;
-
-
-            req.flash(
-                "success",
-                "Login successful!"
-            );
-
-
-            if (
-                res.locals.NODE_ENV ===
-                "development"
-            ) {
-
-                console.log(
-                    "User logged in:",
-                    user
-                );
-
-            }
-
-
-            res.redirect(
-                "/dashboard"
-            );
-
-        } else {
 
             req.flash(
                 "error",
                 "Invalid email or password."
             );
 
+            return res.redirect("/login");
+        }
 
-            res.redirect(
-                "/login"
+        /*
+         * Store the authenticated user in the session.
+         */
+
+        req.session.user = user;
+
+        /*
+         * Diagnostic logging.
+         * Do not log passwords or password hashes.
+         */
+
+        if (process.env.NODE_ENV !== "production") {
+
+            console.log(
+                "LOGIN: Authentication succeeded."
             );
 
+            console.log(
+                "LOGIN: Session ID:",
+                req.sessionID
+            );
+
+            console.log(
+                "LOGIN: Session contains user:",
+                Boolean(req.session.user)
+            );
         }
+
+        /*
+         * Save the session before redirecting.
+         */
+
+        return req.session.save((error) => {
+
+            if (error) {
+
+                console.error(
+                    "LOGIN: Session save failed:",
+                    error.message
+                );
+
+                req.flash(
+                    "error",
+                    "Unable to save your login session. Please try again."
+                );
+
+                return res.redirect("/login");
+            }
+
+            if (process.env.NODE_ENV !== "production") {
+
+                console.log(
+                    "LOGIN: Session saved successfully."
+                );
+            }
+
+            req.flash(
+                "success",
+                "Login successful!"
+            );
+
+            return res.redirect("/dashboard");
+        });
 
     } catch (error) {
 
         console.error(
             "Error during login:",
-            error
+            error.message
         );
-
 
         req.flash(
             "error",
             "An error occurred during login. Please try again."
         );
 
-
-        res.redirect(
-            "/login"
-        );
-
+        return res.redirect("/login");
     }
 };
 
@@ -208,6 +225,10 @@ const processLogout = (
     res
 ) => {
 
+    if (!req.session) {
+        return res.redirect("/login");
+    }
+
     req.session.destroy(
         (error) => {
 
@@ -215,21 +236,15 @@ const processLogout = (
 
                 console.error(
                     "Error destroying session:",
-                    error
+                    error.message
                 );
 
-
-                return res.redirect(
-                    "/login"
-                );
-
+                return res.redirect("/login");
             }
 
+            res.clearCookie("connect.sid");
 
-            res.redirect(
-                "/login"
-            );
-
+            return res.redirect("/login");
         }
     );
 };
@@ -250,20 +265,27 @@ const requireLogin = (
         !req.session.user
     ) {
 
+        if (process.env.NODE_ENV !== "production") {
+
+            console.log(
+                "AUTH: Dashboard access denied.",
+                {
+                    sessionExists: Boolean(req.session),
+                    userExists: Boolean(req.session?.user),
+                    sessionID: req.sessionID
+                }
+            );
+        }
+
         req.flash(
             "error",
             "You must be logged in to access that page."
         );
 
-
-        return res.redirect(
-            "/login"
-        );
-
+        return res.redirect("/login");
     }
 
-
-    next();
+    return next();
 };
 
 
@@ -291,17 +313,11 @@ const requireRole = (
                 "You must be logged in to access that page."
             );
 
-
-            return res.redirect(
-                "/login"
-            );
-
+            return res.redirect("/login");
         }
 
-
         if (
-            req.session.user.role !==
-            requiredRole
+            req.session.user.role !== requiredRole
         ) {
 
             req.flash(
@@ -309,16 +325,10 @@ const requireRole = (
                 "You do not have permission to access that page."
             );
 
-
-            return res.redirect(
-                "/dashboard"
-            );
-
+            return res.redirect("/dashboard");
         }
 
-
-        next();
-
+        return next();
     };
 };
 
@@ -332,19 +342,14 @@ const showDashboard = (
     res
 ) => {
 
-    const user =
-        req.session.user;
+    const user = req.session.user;
 
-
-    res.render(
+    return res.render(
         "dashboard",
         {
             title: "Dashboard",
-
             name: user.name,
-
             email: user.email,
-
             role: user.role
         }
     );
@@ -362,15 +367,12 @@ const showUsersPage = async (
 
     try {
 
-        const users =
-            await getAllUsers();
+        const users = await getAllUsers();
 
-
-        res.render(
+        return res.render(
             "users",
             {
                 title: "Users",
-
                 users
             }
         );
@@ -379,19 +381,16 @@ const showUsersPage = async (
 
         console.error(
             "Error retrieving users:",
-            error
+            error.message
         );
 
-
-        res.status(500).render(
+        return res.status(500).render(
             "errors/error",
             {
                 title: "Server Error",
-
                 error
             }
         );
-
     }
 };
 

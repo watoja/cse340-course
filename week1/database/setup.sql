@@ -1,28 +1,35 @@
+
 /*
 ========================================================
-CSE340 Community Service Projects Database
+CSE340 COMMUNITY SERVICE PROJECTS DATABASE
 ========================================================
 
 Tables:
-1. category
-2. organization
-3. project
-4. project_categories
+1. roles
+2. users
+3. category
+4. organization
+5. project
+6. project_categories
 
-Relationships:
-- One organization can have many projects.
-- One project belongs to one organization.
-- One project can have many categories.
-- One category can belong to many projects.
-- project_categories connects projects and categories.
+IMPORTANT:
+This is a development database reset script.
+It drops existing tables and deletes their data.
+
+Do not run this script against production data
+that you need to preserve.
+========================================================
 */
 
 
 /*
 ========================================================
-DROP EXISTING TABLES
+1. DROP EXISTING TABLES
 ========================================================
 */
+
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
 
 DROP TABLE IF EXISTS project_categories CASCADE;
 DROP TABLE IF EXISTS project CASCADE;
@@ -32,7 +39,71 @@ DROP TABLE IF EXISTS category CASCADE;
 
 /*
 ========================================================
-CATEGORY TABLE
+2. ROLES TABLE
+========================================================
+*/
+
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT
+);
+
+
+/*
+========================================================
+3. INITIAL ROLES
+========================================================
+*/
+
+INSERT INTO roles (
+    role_name,
+    role_description
+)
+VALUES
+(
+    'user',
+    'Standard user with basic access'
+),
+(
+    'admin',
+    'Administrator with permission to manage users'
+);
+
+
+/*
+========================================================
+4. USERS TABLE
+========================================================
+*/
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(254) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id INTEGER NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_users_role
+        FOREIGN KEY (role_id)
+        REFERENCES roles(role_id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT users_name_not_blank
+        CHECK (LENGTH(TRIM(name)) > 0),
+
+    CONSTRAINT users_email_not_blank
+        CHECK (LENGTH(TRIM(email)) > 0),
+
+    CONSTRAINT users_password_hash_not_blank
+        CHECK (LENGTH(TRIM(password_hash)) > 0)
+);
+
+
+/*
+========================================================
+5. CATEGORY TABLE
 ========================================================
 */
 
@@ -45,81 +116,7 @@ CREATE TABLE category (
 
 /*
 ========================================================
-ORGANIZATION TABLE
-========================================================
-*/
-
-CREATE TABLE organization (
-    organization_id SERIAL PRIMARY KEY,
-    organization_name VARCHAR(150) UNIQUE NOT NULL,
-    description TEXT NOT NULL,
-    website VARCHAR(255),
-    contact_email VARCHAR(150),
-    phone VARCHAR(50),
-    location VARCHAR(150),
-    image VARCHAR(255)
-);
-
-
-/*
-========================================================
-PROJECT TABLE
-========================================================
-*/
-
-CREATE TABLE project (
-    project_id SERIAL PRIMARY KEY,
-    project_name VARCHAR(150) NOT NULL,
-    description TEXT NOT NULL,
-    project_date DATE,
-    location VARCHAR(150),
-    volunteers_needed INTEGER DEFAULT 0,
-
-    organization_id INTEGER NOT NULL,
-
-    CONSTRAINT fk_project_organization
-        FOREIGN KEY (organization_id)
-        REFERENCES organization(organization_id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT volunteers_needed_check
-        CHECK (volunteers_needed >= 0)
-);
-
-
-/*
-========================================================
-PROJECT_CATEGORIES TABLE
-========================================================
-
-This is a junction table that connects projects
-to categories.
-
-A project can have multiple categories.
-A category can belong to multiple projects.
-*/
-
-CREATE TABLE project_categories (
-    project_id INTEGER NOT NULL,
-    category_id INTEGER NOT NULL,
-
-    PRIMARY KEY (project_id, category_id),
-
-    CONSTRAINT fk_project_categories_project
-        FOREIGN KEY (project_id)
-        REFERENCES project(project_id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_project_categories_category
-        FOREIGN KEY (category_id)
-        REFERENCES category(category_id)
-        ON DELETE CASCADE
-);
-
-
-/*
-========================================================
-CATEGORY SAMPLE DATA
+6. CATEGORY SAMPLE DATA
 ========================================================
 */
 
@@ -148,7 +145,25 @@ VALUES
 
 /*
 ========================================================
-ORGANIZATION SAMPLE DATA
+7. ORGANIZATION TABLE
+========================================================
+*/
+
+CREATE TABLE organization (
+    organization_id SERIAL PRIMARY KEY,
+    organization_name VARCHAR(150) UNIQUE NOT NULL,
+    description TEXT NOT NULL,
+    website VARCHAR(255),
+    contact_email VARCHAR(150),
+    phone VARCHAR(50),
+    location VARCHAR(150),
+    image VARCHAR(255)
+);
+
+
+/*
+========================================================
+8. ORGANIZATION SAMPLE DATA
 ========================================================
 */
 
@@ -193,22 +208,40 @@ VALUES
 
 /*
 ========================================================
-PROJECT SAMPLE DATA
+9. PROJECT TABLE
+========================================================
+*/
+
+CREATE TABLE project (
+    project_id SERIAL PRIMARY KEY,
+    project_name VARCHAR(150) NOT NULL,
+    description TEXT NOT NULL,
+    project_date DATE,
+    location VARCHAR(150),
+    volunteers_needed INTEGER NOT NULL DEFAULT 0,
+
+    organization_id INTEGER NOT NULL,
+
+    CONSTRAINT fk_project_organization
+        FOREIGN KEY (organization_id)
+        REFERENCES organization(organization_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT volunteers_needed_check
+        CHECK (volunteers_needed >= 0)
+);
+
+
+/*
+========================================================
+10. PROJECT SAMPLE DATA
 ========================================================
 
-There are 15 projects.
-
-Organization 1:
-Projects 1-5
-
-Organization 2:
-Projects 6-10
-
-Organization 3:
-Projects 11-15
-
-This satisfies the requirement for at least
-five projects for each organization.
+15 projects:
+- Projects 1-5 belong to Uganda Red Cross Society.
+- Projects 6-10 belong to Uganda Wildlife Authority.
+- Projects 11-15 belong to Reach A Hand Uganda.
+========================================================
 */
 
 INSERT INTO project (
@@ -221,12 +254,7 @@ INSERT INTO project (
 )
 VALUES
 
-/*
---------------------------------------------------------
-UGANDA RED CROSS SOCIETY
-organization_id = 1
---------------------------------------------------------
-*/
+/* UGANDA RED CROSS SOCIETY */
 
 (
     'Community Tree Planting',
@@ -236,7 +264,6 @@ organization_id = 1
     25,
     1
 ),
-
 (
     'Community Cleanup Day',
     'Volunteers work with community members to clean public spaces and improve sanitation.',
@@ -245,7 +272,6 @@ organization_id = 1
     30,
     1
 ),
-
 (
     'First Aid Training',
     'Volunteers support community first aid awareness and basic emergency response training.',
@@ -254,7 +280,6 @@ organization_id = 1
     20,
     1
 ),
-
 (
     'Health Awareness Campaign',
     'Volunteers participate in community health education and awareness activities.',
@@ -263,7 +288,6 @@ organization_id = 1
     25,
     1
 ),
-
 (
     'Emergency Preparedness Workshop',
     'Volunteers help families and communities learn about emergency preparedness and disaster response.',
@@ -273,13 +297,7 @@ organization_id = 1
     1
 ),
 
-
-/*
---------------------------------------------------------
-UGANDA WILDLIFE AUTHORITY
-organization_id = 2
---------------------------------------------------------
-*/
+/* UGANDA WILDLIFE AUTHORITY */
 
 (
     'Wildlife Conservation Outreach',
@@ -289,7 +307,6 @@ organization_id = 2
     20,
     2
 ),
-
 (
     'Wetland Restoration Project',
     'Volunteers help restore wetland areas and promote environmental protection.',
@@ -298,7 +315,6 @@ organization_id = 2
     30,
     2
 ),
-
 (
     'Forest Conservation Day',
     'Volunteers participate in activities that support forest conservation and environmental awareness.',
@@ -307,7 +323,6 @@ organization_id = 2
     35,
     2
 ),
-
 (
     'Wildlife Education Workshop',
     'Volunteers help students learn about Uganda wildlife and the importance of conservation.',
@@ -316,7 +331,6 @@ organization_id = 2
     20,
     2
 ),
-
 (
     'Community Conservation Campaign',
     'Volunteers work with local communities to promote wildlife protection and sustainable practices.',
@@ -326,13 +340,7 @@ organization_id = 2
     2
 ),
 
-
-/*
---------------------------------------------------------
-REACH A HAND UGANDA
-organization_id = 3
---------------------------------------------------------
-*/
+/* REACH A HAND UGANDA */
 
 (
     'Youth Education Workshop',
@@ -342,7 +350,6 @@ organization_id = 3
     25,
     3
 ),
-
 (
     'Student Mentoring Program',
     'Volunteers mentor students and help them develop educational and personal goals.',
@@ -351,7 +358,6 @@ organization_id = 3
     20,
     3
 ),
-
 (
     'Youth Health Awareness Day',
     'Volunteers support young people with health education and wellness information.',
@@ -360,7 +366,6 @@ organization_id = 3
     25,
     3
 ),
-
 (
     'Leadership Skills Workshop',
     'Volunteers help young people develop leadership, communication, and teamwork skills.',
@@ -369,7 +374,6 @@ organization_id = 3
     20,
     3
 ),
-
 (
     'Community Youth Service Day',
     'Young people and volunteers work together on projects that strengthen their local community.',
@@ -382,125 +386,93 @@ organization_id = 3
 
 /*
 ========================================================
-PROJECT_CATEGORIES SAMPLE DATA
+11. PROJECT_CATEGORIES JUNCTION TABLE
 ========================================================
-
-There are more than five rows here.
-
-Projects can have more than one category.
 */
+
+CREATE TABLE project_categories (
+    project_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+
+    PRIMARY KEY (project_id, category_id),
+
+    CONSTRAINT fk_project_categories_project
+        FOREIGN KEY (project_id)
+        REFERENCES project(project_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_project_categories_category
+        FOREIGN KEY (category_id)
+        REFERENCES category(category_id)
+        ON DELETE CASCADE
+);
+
 
 /*
-Project 1 - Environmental
+========================================================
+12. PROJECT CATEGORY ASSIGNMENTS
+========================================================
 */
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(1, 1);
 
-/*
-Project 2 - Community Service
-*/
-INSERT INTO project_categories (project_id, category_id)
+INSERT INTO project_categories (
+    project_id,
+    category_id
+)
 VALUES
-(2, 3);
-
-/*
-Project 3 - Health and Wellness
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(3, 4);
-
-/*
-Project 4 - Health and Wellness
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(4, 4);
-
-/*
-Project 5 - Community Service
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(5, 3);
-
-/*
-Project 6 - Environmental
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(6, 1);
-
-/*
-Project 7 - Environmental
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(7, 1);
-
-/*
-Project 8 - Environmental
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(8, 1);
-
-/*
-Project 9 - Educational
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(9, 2);
-
-/*
-Project 10 - Environmental + Community Service
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
+(1, 1),
+(2, 3),
+(3, 4),
+(4, 4),
+(5, 3),
+(6, 1),
+(7, 1),
+(8, 1),
+(9, 2),
 (10, 1),
-(10, 3);
-
-/*
-Project 11 - Educational
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(11, 2);
-
-/*
-Project 12 - Educational
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(12, 2);
-
-/*
-Project 13 - Health and Wellness
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(13, 4);
-
-/*
-Project 14 - Educational
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
-(14, 2);
-
-/*
-Project 15 - Community Service + Educational
-*/
-INSERT INTO project_categories (project_id, category_id)
-VALUES
+(10, 3),
+(11, 2),
+(12, 2),
+(13, 4),
+(14, 2),
 (15, 3),
 (15, 2);
 
 
 /*
 ========================================================
-VERIFY THE DATA
+13. VERIFY ROLES
+========================================================
+*/
+
+SELECT
+    role_id,
+    role_name,
+    role_description
+FROM roles
+ORDER BY role_id;
+
+
+/*
+========================================================
+14. VERIFY REGISTERED USERS
+========================================================
+*/
+
+SELECT
+    u.user_id,
+    u.name,
+    u.email,
+    r.role_name AS role,
+    u.created_at
+FROM users AS u
+INNER JOIN roles AS r
+    ON u.role_id = r.role_id
+ORDER BY u.user_id;
+
+
+/*
+========================================================
+15. VERIFY ORGANIZATIONS
 ========================================================
 */
 
@@ -511,66 +483,53 @@ FROM organization
 ORDER BY organization_id;
 
 
-SELECT
-    organization.organization_name,
-    COUNT(project.project_id) AS project_count
-FROM organization
-LEFT JOIN project
-    ON organization.organization_id = project.organization_id
-GROUP BY
-    organization.organization_id,
-    organization.organization_name
-ORDER BY organization.organization_id;
+/*
+========================================================
+16. VERIFY PROJECT COUNT PER ORGANIZATION
+========================================================
+*/
 
+SELECT
+    o.organization_name,
+    COUNT(p.project_id) AS project_count
+FROM organization AS o
+LEFT JOIN project AS p
+    ON o.organization_id = p.organization_id
+GROUP BY
+    o.organization_id,
+    o.organization_name
+ORDER BY o.organization_id;
+
+
+/*
+========================================================
+17. VERIFY PROJECT CATEGORY COUNT
+========================================================
+*/
 
 SELECT
     COUNT(*) AS project_category_count
 FROM project_categories;
 
 
+/*
+========================================================
+18. VERIFY PROJECTS, ORGANIZATIONS, AND CATEGORIES
+========================================================
+*/
+
 SELECT
-    project.project_name,
-    organization.organization_name,
-    category.category_name
-FROM project
-INNER JOIN organization
-    ON project.organization_id = organization.organization_id
-INNER JOIN project_categories
-    ON project.project_id = project_categories.project_id
-INNER JOIN category
-    ON project_categories.category_id = category.category_id
-ORDER BY project.project_id;
-
--- =========================================================
--- ROLES TABLE
--- =========================================================
-
-CREATE TABLE roles (
-    role_id SERIAL PRIMARY KEY,
-    role_name VARCHAR(50) UNIQUE NOT NULL,
-    role_description TEXT
-);
-
-
--- =========================================================
--- INITIAL ROLE DATA
--- =========================================================
-
-INSERT INTO roles (role_name, role_description) VALUES
-    ('user', 'Standard user with basic access'),
-    ('admin', 'Administrator with full system access');
-
-
--- =========================================================
--- USERS TABLE
--- =========================================================
-
-CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    role_id INTEGER REFERENCES roles(role_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
+    p.project_id,
+    p.project_name,
+    o.organization_name,
+    c.category_name
+FROM project AS p
+INNER JOIN organization AS o
+    ON p.organization_id = o.organization_id
+INNER JOIN project_categories AS pc
+    ON p.project_id = pc.project_id
+INNER JOIN category AS c
+    ON pc.category_id = c.category_id
+ORDER BY
+    p.project_id,
+    c.category_name;

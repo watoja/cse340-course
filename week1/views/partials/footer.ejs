@@ -1,3 +1,4 @@
+
 <footer class="site-footer">
 
     <div class="footer-container">
@@ -6,9 +7,7 @@
 
             <section class="footer-section">
 
-                <h2>
-                    Get Involved
-                </h2>
+                <h2>Get Involved</h2>
 
                 <p>
                     Find opportunities to volunteer your time,
@@ -17,12 +16,9 @@
 
             </section>
 
-
             <section class="footer-section">
 
-                <h2>
-                    Our Focus
-                </h2>
+                <h2>Our Focus</h2>
 
                 <p>
                     Environmental service, education, community
@@ -33,34 +29,21 @@
 
         </div>
 
-
         <div class="footer-bottom">
 
             <p>
-
                 &copy;
-
                 <span id="currentYear"></span>
-
                 Service Projects-Abraham Watongola James Kaana
 
                 <% if (NODE_ENV === "development") { %>
-
-                    <span>
-                        (Development mode)
-                    </span>
-
+                    <span>(Development mode)</span>
                 <% } %>
-
             </p>
 
-
             <p>
-
                 Last Modified:
-
                 <span id="lastModified"></span>
-
             </p>
 
         </div>
@@ -69,38 +52,9 @@
 
 </footer>
 
-
-<script
-    src="/scripts/navigation.js"
-    defer
-></script>
-
-
-<script>
-
-    const currentYear =
-        document.getElementById("currentYear");
-
-    const lastModified =
-        document.getElementById("lastModified");
-
-    if (currentYear) {
-
-        currentYear.textContent =
-            new Date().getFullYear();
-
-    }
-
-    if (lastModified) {
-
-        lastModified.textContent =
-            document.lastModified;
-
-    }
-
-</script>
-
+<script src="/scripts/footer.js" defer></script>
+<script src="/scripts/navigation.js" defer></script>
 
 </body>
-
 </html>
+

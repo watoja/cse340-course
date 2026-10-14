@@ -1,4 +1,3 @@
-
 import bcrypt from "bcrypt";
 
 import {
@@ -6,6 +5,10 @@ import {
     authenticateUser,
     getAllUsers
 } from "../models/users.js";
+
+import {
+    getVolunteeredProjects
+} from "../models/projects.js";
 
 
 /* ---------------------------------------------------------
@@ -337,22 +340,36 @@ const requireRole = (
    SHOW DASHBOARD
 --------------------------------------------------------- */
 
-const showDashboard = (
+const showDashboard = async (
     req,
-    res
+    res,
+    next
 ) => {
 
-    const user = req.session.user;
+    try {
 
-    return res.render(
-        "dashboard",
-        {
-            title: "Dashboard",
-            name: user.name,
-            email: user.email,
-            role: user.role
-        }
-    );
+        const user = req.session.user;
+
+        const projects = await getVolunteeredProjects(
+            user.user_id
+        );
+
+        return res.render(
+            "dashboard",
+            {
+                title: "Dashboard",
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                projects
+            }
+        );
+
+    } catch (error) {
+
+        next(error);
+
+    }
 };
 
 

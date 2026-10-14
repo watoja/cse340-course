@@ -144,6 +144,26 @@
                     </section>
 
 
+                    <!-- VOLUNTEER FUNCTIONALITY SECTION -->
+                    <section class="volunteer-action-section" style="margin: 20px 0;">
+                        <% if (isLoggedIn) { %>
+                            <% if (isVolunteered) { %>
+                                <form action="/project/<%= project.project_id %>/volunteer" method="POST">
+                                    <input type="hidden" name="action" value="remove">
+                                    <button type="submit" class="button button-danger">Remove Volunteering</button>
+                                </form>
+                            <% } else { %>
+                                <form action="/project/<%= project.project_id %>/volunteer" method="POST">
+                                    <input type="hidden" name="action" value="add">
+                                    <button type="submit" class="button">Volunteer for this Project</button>
+                                </form>
+                            <% } %>
+                        <% } else { %>
+                            <p><a href="/login">Log in</a> to volunteer for this project.</p>
+                        <% } %>
+                    </section>
+
+
                     <div class="form-actions">
 
                         <% if (

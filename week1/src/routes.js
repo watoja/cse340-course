@@ -31,6 +31,8 @@ import {
 import {
     showProjectsPage,
     showProjectDetailsPage,
+    handleVolunteerAction,
+    showVolunteeredProjectsPage,
     showCreateProjectPage,
     createProjectAction,
     showEditProjectPage,
@@ -135,7 +137,7 @@ router.get(
 
 
 /* ---------------------------------------------------------
-   PROJECTS
+   PROJECTS & VOLUNTEERING
 --------------------------------------------------------- */
 
 /*
@@ -205,6 +207,23 @@ router.post(
     requireLogin,
     requireRole("admin"),
     updateAssignedCategories
+);
+
+
+/*
+   Protected routes for volunteering and unvolunteering.
+*/
+
+router.post(
+    "/project/:id/volunteer",
+    requireLogin,
+    handleVolunteerAction
+);
+
+router.get(
+    "/dashboard/volunteering",
+    requireLogin,
+    showVolunteeredProjectsPage
 );
 
 

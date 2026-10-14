@@ -12,7 +12,11 @@ import {
     getProjectOrganizations,
     getProjectCategories,
     getAssignedCategories,
-    updateProjectCategories
+    updateProjectCategories,
+    addVolunteer,
+    removeVolunteer,
+    checkUserVolunteered,
+    getVolunteeredProjects
 } from "../models/projects.js";
 
 
@@ -122,6 +126,25 @@ const showProjectDetailsPage = async (
             );
 
 
+        let isVolunteered = false;
+
+        if (
+            req.session &&
+            req.session.user
+        ) {
+
+            const userId =
+                req.session.user.user_id;
+
+            isVolunteered =
+                await checkUserVolunteered(
+                    userId,
+                    projectId
+                );
+
+        }
+
+
         res.render(
             "project-details",
             {
@@ -130,7 +153,133 @@ const showProjectDetailsPage = async (
 
                 project,
 
-                categories
+                categories,
+
+                isVolunteered
+            }
+        );
+
+    } catch (error) {
+
+        next(error);
+
+    }
+};
+
+
+/* ---------------------------------------------------------
+   HANDLE VOLUNTEER ACTION (ADD / REMOVE)
+--------------------------------------------------------- */
+
+const handleVolunteerAction = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const projectId =
+            Number(req.params.id);
+
+        const userId =
+            req.session.user.user_id;
+
+        const { action } = req.body;
+
+
+        if (
+            !Number.isInteger(projectId) ||
+            projectId < 1
+        ) {
+
+            return res.status(404).render(
+                "errors/error",
+                {
+                    title: "Project Not Found",
+                    error: {
+                        message: "The requested project could not be found."
+                    }
+                }
+            );
+
+        }
+
+
+        if (action === "add") {
+
+            await addVolunteer(
+                userId,
+                projectId
+            );
+
+            req.flash(
+                "success",
+                "You have successfully volunteered for this project."
+            );
+
+        } else if (action === "remove") {
+
+            await removeVolunteer(
+                userId,
+                projectId
+            );
+
+            req.flash(
+                "success",
+                "You have been removed from this project's volunteer list."
+            );
+
+        } else {
+
+            req.flash(
+                "error",
+                "Invalid action requested."
+            );
+
+        }
+
+
+        res.redirect(
+            `/project/${projectId}`
+        );
+
+    } catch (error) {
+
+        next(error);
+
+    }
+};
+
+
+/* ---------------------------------------------------------
+   SHOW VOLUNTEERED PROJECTS PAGE
+--------------------------------------------------------- */
+
+const showVolunteeredProjectsPage = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const userId =
+            req.session.user.user_id;
+
+        const projects =
+            await getVolunteeredProjects(
+                userId
+            );
+
+
+        res.render(
+            "volunteering",
+            {
+                title:
+                    "My Volunteered Projects",
+
+                projects
             }
         );
 
@@ -694,6 +843,8 @@ const updateAssignedCategories =
 export {
     showProjectsPage,
     showProjectDetailsPage,
+    handleVolunteerAction,
+    showVolunteeredProjectsPage,
     showCreateProjectPage,
     createProjectAction,
     showEditProjectPage,

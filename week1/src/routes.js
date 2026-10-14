@@ -1,3 +1,4 @@
+
 import express from "express";
 
 import {
@@ -12,11 +13,9 @@ import {
     showUsersPage
 } from "./controllers/users.js";
 
-
 import {
     showHomePage
 } from "./controllers/index.js";
-
 
 import {
     showOrganizationsPage,
@@ -27,7 +26,6 @@ import {
     updateOrganizationController
 } from "./controllers/organizations.js";
 
-
 import {
     showProjectsPage,
     showProjectDetailsPage,
@@ -36,9 +34,10 @@ import {
     showEditProjectPage,
     updateProjectAction,
     showAssignCategoriesPage,
-    updateAssignedCategories
+    updateAssignedCategories,
+    volunteerForProject,
+    removeVolunteerFromProject
 } from "./controllers/projects.js";
-
 
 import {
     showCategoriesPage,
@@ -48,7 +47,6 @@ import {
     showEditCategoryPage,
     updateCategoryController
 } from "./controllers/categories.js";
-
 
 import {
     validateOrganization,
@@ -64,29 +62,17 @@ const router = express.Router();
    HOME
 --------------------------------------------------------- */
 
-router.get(
-    "/",
-    showHomePage
-);
+router.get("/", showHomePage);
 
 
 /* ---------------------------------------------------------
    ORGANIZATIONS
 --------------------------------------------------------- */
 
-/*
-   All users can view organizations.
-*/
-
 router.get(
     "/organizations",
     showOrganizationsPage
 );
-
-
-/*
-   Only administrators can create organizations.
-*/
 
 router.get(
     "/organization/create",
@@ -103,11 +89,6 @@ router.post(
     createOrganizationController
 );
 
-
-/*
-   Only administrators can edit organizations.
-*/
-
 router.get(
     "/organization/:id/edit",
     requireLogin,
@@ -123,11 +104,6 @@ router.post(
     updateOrganizationController
 );
 
-
-/*
-   All users can view organization details.
-*/
-
 router.get(
     "/organization/:id",
     showOrganizationDetailsPage
@@ -138,19 +114,10 @@ router.get(
    PROJECTS
 --------------------------------------------------------- */
 
-/*
-   All users can view the projects list.
-*/
-
 router.get(
     "/projects",
     showProjectsPage
 );
-
-
-/*
-   Only administrators can create projects.
-*/
 
 router.get(
     "/project/create",
@@ -167,11 +134,6 @@ router.post(
     createProjectAction
 );
 
-
-/*
-   Only administrators can edit projects.
-*/
-
 router.get(
     "/project/:id/edit",
     requireLogin,
@@ -186,12 +148,6 @@ router.post(
     validateProject,
     updateProjectAction
 );
-
-
-/*
-   Only administrators can assign categories
-   to projects.
-*/
 
 router.get(
     "/project/:id/categories",
@@ -208,9 +164,27 @@ router.post(
 );
 
 
-/*
-   All users can view project details.
-*/
+/* ---------------------------------------------------------
+   PROJECT VOLUNTEERING
+   ONLY LOGGED-IN USERS
+--------------------------------------------------------- */
+
+router.post(
+    "/project/:id/volunteer",
+    requireLogin,
+    volunteerForProject
+);
+
+router.post(
+    "/project/:id/volunteer/remove",
+    requireLogin,
+    removeVolunteerFromProject
+);
+
+
+/* ---------------------------------------------------------
+   PROJECT DETAILS
+--------------------------------------------------------- */
 
 router.get(
     "/project/:id",
@@ -222,19 +196,10 @@ router.get(
    CATEGORIES
 --------------------------------------------------------- */
 
-/*
-   All users can view categories.
-*/
-
 router.get(
     "/categories",
     showCategoriesPage
 );
-
-
-/*
-   Only administrators can create categories.
-*/
 
 router.get(
     "/category/create",
@@ -251,11 +216,6 @@ router.post(
     createCategoryController
 );
 
-
-/*
-   Only administrators can edit categories.
-*/
-
 router.get(
     "/category/:id/edit",
     requireLogin,
@@ -270,11 +230,6 @@ router.post(
     validateCategory,
     updateCategoryController
 );
-
-
-/*
-   All users can view category details.
-*/
 
 router.get(
     "/category/:id",

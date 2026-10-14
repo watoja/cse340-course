@@ -39,19 +39,16 @@
 
             <div class="dashboard-account-item">
                 <strong>Name</strong>
-
                 <span><%= name %></span>
             </div>
 
             <div class="dashboard-account-item">
                 <strong>Email</strong>
-
                 <span><%= email %></span>
             </div>
 
             <div class="dashboard-account-item">
                 <strong>Role</strong>
-
                 <span><%= role %></span>
             </div>
 
@@ -62,6 +59,143 @@
                 Log Out
             </a>
         </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         MY VOLUNTEER PROJECTS
+         AVAILABLE TO ALL LOGGED-IN USERS
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>My Volunteer Projects</h2>
+
+            <p>
+                View the service projects you have signed up
+                to support. You can also remove yourself from
+                a project if your plans change.
+            </p>
+        </div>
+
+        <% if (
+            typeof volunteeredProjects !== "undefined" &&
+            Array.isArray(volunteeredProjects) &&
+            volunteeredProjects.length > 0
+        ) { %>
+
+            <div class="project-grid">
+
+                <% volunteeredProjects.forEach((project) => { %>
+
+                    <article class="project-card">
+
+                        <div class="project-content">
+
+                            <h3>
+                                <a href="/project/<%= project.project_id %>">
+                                    <%= project.project_name %>
+                                </a>
+                            </h3>
+
+                            <p>
+                                <strong>Date:</strong>
+
+                                <% if (project.project_date) { %>
+                                    <%= new Date(
+                                        project.project_date
+                                    ).toLocaleDateString() %>
+                                <% } else { %>
+                                    Date not specified
+                                <% } %>
+                            </p>
+
+                            <p>
+                                <strong>Location:</strong>
+
+                                <%= project.location || "Not specified" %>
+                            </p>
+
+                            <p>
+                                <strong>Organization:</strong>
+
+                                <%= project.organization_name ||
+                                    "Not assigned" %>
+                            </p>
+
+                            <% if (project.signup_date) { %>
+
+                                <p>
+                                    <strong>Signed up:</strong>
+
+                                    <%= new Date(
+                                        project.signup_date
+                                    ).toLocaleDateString() %>
+                                </p>
+
+                            <% } %>
+
+                            <div class="form-actions">
+
+                                <a
+                                    href="/project/<%= project.project_id %>"
+                                    class="button"
+                                >
+                                    View Project
+                                </a>
+
+                                <form
+                                    action="/project/<%= project.project_id %>/volunteer/remove"
+                                    method="POST"
+                                >
+
+                                    <input
+                                        type="hidden"
+                                        name="returnTo"
+                                        value="dashboard"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="button"
+                                    >
+                                        Remove Me
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                <% }); %>
+
+            </div>
+
+        <% } else { %>
+
+            <div class="card">
+
+                <p>
+                    You have not signed up to volunteer for
+                    any service projects yet.
+                </p>
+
+                <div class="dashboard-actions">
+
+                    <a href="/projects" class="button">
+                        Explore Service Projects
+                    </a>
+
+                </div>
+
+            </div>
+
+        <% } %>
 
     </section>
 
@@ -99,6 +233,7 @@
                 </div>
 
                 <div class="dashboard-actions">
+
                     <a href="/organizations" class="button">
                         Manage Organizations
                     </a>
@@ -106,6 +241,7 @@
                     <a href="/organization/create" class="button">
                         Add Organization
                     </a>
+
                 </div>
 
             </div>
@@ -125,6 +261,7 @@
                 </div>
 
                 <div class="dashboard-actions">
+
                     <a href="/projects" class="button">
                         Manage Projects
                     </a>
@@ -132,6 +269,7 @@
                     <a href="/project/create" class="button">
                         Add Project
                     </a>
+
                 </div>
 
             </div>
@@ -151,6 +289,7 @@
                 </div>
 
                 <div class="dashboard-actions">
+
                     <a href="/categories" class="button">
                         Manage Categories
                     </a>
@@ -158,6 +297,7 @@
                     <a href="/category/create" class="button">
                         Add Category
                     </a>
+
                 </div>
 
             </div>
@@ -177,9 +317,11 @@
                 </div>
 
                 <div class="dashboard-actions">
+
                     <a href="/users" class="button">
                         Manage Users
                     </a>
+
                 </div>
 
             </div>
@@ -225,4 +367,3 @@
 </main>
 
 <%- include("partials/footer") %>
-

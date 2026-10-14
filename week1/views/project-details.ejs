@@ -1,7 +1,10 @@
+
 <%- include("partials/header") %>
 
 <main>
     <div class="main-content">
+
+        <!-- SUCCESS MESSAGES -->
 
         <% if (success && success.length > 0) { %>
 
@@ -23,6 +26,8 @@
         <% } %>
 
 
+        <!-- PROJECT HEADER -->
+
         <section class="page-header">
 
             <h1>
@@ -36,6 +41,8 @@
         </section>
 
 
+        <!-- PROJECT DETAILS -->
+
         <section class="project-details">
 
             <article class="project-card">
@@ -46,47 +53,37 @@
                         <%= project.project_name %>
                     </h2>
 
-
                     <p>
                         <%= project.description %>
                     </p>
 
 
+                    <!-- PROJECT INFORMATION -->
+
                     <div class="project-information">
 
                         <p>
-                            <strong>
-                                Date:
-                            </strong>
+                            <strong>Date:</strong>
 
                             <%= new Date(
                                 project.project_date
                             ).toLocaleDateString() %>
                         </p>
 
-
                         <p>
-                            <strong>
-                                Location:
-                            </strong>
+                            <strong>Location:</strong>
 
                             <%= project.location %>
                         </p>
 
-
                         <p>
-                            <strong>
-                                Volunteers Needed:
-                            </strong>
+                            <strong>Volunteers Needed:</strong>
 
                             <%= project.volunteers_needed %>
                         </p>
 
-
                         <p>
-                            <strong>
-                                Organization:
-                            </strong>
+                            <strong>Organization:</strong>
 
                             <% if (project.organization_id) { %>
 
@@ -107,6 +104,8 @@
                     </div>
 
 
+                    <!-- ASSIGNED CATEGORIES -->
+
                     <section class="project-categories">
 
                         <h3>
@@ -120,9 +119,7 @@
 
                             <ul class="category-list">
 
-                                <% categories.forEach(
-                                    (category) => {
-                                %>
+                                <% categories.forEach((category) => { %>
 
                                     <li>
                                         <%= category.category_name %>
@@ -143,6 +140,86 @@
 
                     </section>
 
+
+                    <!-- VOLUNTEER ACTIONS -->
+
+                    <section class="project-volunteer-section">
+
+                        <h3>
+                            Volunteer for This Project
+                        </h3>
+
+                        <% if (isLoggedIn) { %>
+
+                            <% if (hasVolunteered) { %>
+
+                                <p role="status">
+                                    You are volunteering for this project.
+                                </p>
+
+                                <form
+                                    action="/project/<%= project.project_id %>/volunteer/remove"
+                                    method="POST"
+                                    class="form-actions"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="button"
+                                    >
+                                        Remove Me as a Volunteer
+                                    </button>
+
+                                </form>
+
+                            <% } else { %>
+
+                                <p>
+                                    Interested in helping with this
+                                    service project? Sign up to volunteer.
+                                </p>
+
+                                <form
+                                    action="/project/<%= project.project_id %>/volunteer"
+                                    method="POST"
+                                    class="form-actions"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="button"
+                                    >
+                                        Volunteer for This Project
+                                    </button>
+
+                                </form>
+
+                            <% } %>
+
+                        <% } else { %>
+
+                            <p>
+                                Please log in to volunteer for this project.
+                            </p>
+
+                            <div class="form-actions">
+
+                                <a href="/login" class="button">
+                                    Log In to Volunteer
+                                </a>
+
+                                <a href="/register" class="button">
+                                    Create an Account
+                                </a>
+
+                            </div>
+
+                        <% } %>
+
+                    </section>
+
+
+                    <!-- PAGE ACTIONS -->
 
                     <div class="form-actions">
 
@@ -167,7 +244,6 @@
                             </a>
 
                         <% } %>
-
 
                         <a
                             href="/projects"

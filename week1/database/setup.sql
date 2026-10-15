@@ -21,22 +21,6 @@ that you need to preserve.
 ========================================================
 */
 
-
-/*
-========================================================
-1. DROP EXISTING TABLES
-========================================================
-*/
-
-DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS roles CASCADE;
-
-DROP TABLE IF EXISTS project_categories CASCADE;
-DROP TABLE IF EXISTS project CASCADE;
-DROP TABLE IF EXISTS organization CASCADE;
-DROP TABLE IF EXISTS category CASCADE;
-
-
 /*
 ========================================================
 2. ROLES TABLE
@@ -231,6 +215,23 @@ CREATE TABLE project (
         CHECK (volunteers_needed >= 0)
 );
 
+CREATE TABLE IF NOT EXISTS project_volunteers (
+    user_id INTEGER NOT NULL,
+    project_id INTEGER NOT NULL,
+    signup_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (user_id, project_id),
+
+    CONSTRAINT fk_project_volunteers_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_project_volunteers_project
+        FOREIGN KEY (project_id)
+        REFERENCES project(project_id)
+        ON DELETE CASCADE
+);
 
 /*
 ========================================================
@@ -534,6 +535,7 @@ ORDER BY
     p.project_id,
     c.category_name;
 
+<<<<<<< HEAD
 
 /*
 ========================================================
@@ -558,3 +560,5 @@ CREATE TABLE IF NOT EXISTS volunteers (
         REFERENCES project(project_id)
         ON DELETE CASCADE
 );
+=======
+>>>>>>> refs/remotes/origin/main

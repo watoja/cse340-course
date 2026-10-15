@@ -15,17 +15,12 @@ import {
    SHOW REGISTRATION FORM
 --------------------------------------------------------- */
 
-const showUserRegistrationForm = (
-    req,
-    res
-) => {
-
-    res.render(
-        "register",
-        {
-            title: "Register"
-        }
-    );
+const showUserRegistrationForm = (req, res) => {
+    res.render("register", {
+        title: "Register",
+        success: req.flash("success"),
+        errors: req.flash("error")
+    });
 };
 
 
@@ -33,31 +28,14 @@ const showUserRegistrationForm = (
    PROCESS REGISTRATION FORM
 --------------------------------------------------------- */
 
-const processUserRegistrationForm = async (
-    req,
-    res
-) => {
-
-    const {
-        name,
-        email,
-        password
-    } = req.body;
+const processUserRegistrationForm = async (req, res) => {
+    const { name, email, password } = req.body;
 
     try {
-
         const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(password, salt);
 
-        const passwordHash = await bcrypt.hash(
-            password,
-            salt
-        );
-
-        await createUser(
-            name,
-            email,
-            passwordHash
-        );
+        await createUser(name, email, passwordHash);
 
         req.flash(
             "success",
@@ -65,22 +43,25 @@ const processUserRegistrationForm = async (
         );
 
         return res.redirect("/login");
-
     } catch (error) {
+        console.error("Error registering user:", error.message);
 
-        console.error(
-            "Error registering user:",
-            error.message
-        );
+        if (error.code === "23505") {
+            req.flash(
+                "error",
+                "An account with that email address already exists."
+            );
 
-        return res.status(500).render(
-            "register",
-            {
-                title: "Register",
-                error:
-                    "An error occurred during registration. Please try again."
-            }
-        );
+            return res.redirect("/register");
+        }
+
+        return res.status(500).render("register", {
+            title: "Register",
+            error: "An error occurred during registration. Please try again.",
+            errors: [
+                "An error occurred during registration. Please try again."
+            ]
+        });
     }
 };
 
@@ -89,17 +70,12 @@ const processUserRegistrationForm = async (
    SHOW LOGIN FORM
 --------------------------------------------------------- */
 
-const showLoginForm = (
-    req,
-    res
-) => {
-
-    res.render(
-        "login",
-        {
-            title: "Login"
-        }
-    );
+const showLoginForm = (req, res) => {
+    res.render("login", {
+        title: "Login",
+        success: req.flash("success"),
+        errors: req.flash("error")
+    });
 };
 
 
@@ -107,73 +83,34 @@ const showLoginForm = (
    PROCESS LOGIN FORM
 --------------------------------------------------------- */
 
-const processLoginForm = async (
-    req,
-    res
-) => {
-
-    const {
-        email,
-        password
-    } = req.body;
+const processLoginForm = async (req, res) => {
+    const { email, password } = req.body;
 
     try {
-
-        const user = await authenticateUser(
-            email,
-            password
-        );
+        const user = await authenticateUser(email, password);
 
         if (!user) {
+            req.flash("error", "Invalid email or password.");
+            return res.redirect("/login");
+        }
 
-            console.log(
-                "LOGIN: Authentication failed."
+        if (user.user_id === undefined || user.user_id === null) {
+            console.error(
+                "LOGIN: Authenticated user is missing user_id."
             );
 
             req.flash(
                 "error",
-                "Invalid email or password."
+                "Unable to establish your account session. Please contact support."
             );
 
             return res.redirect("/login");
         }
 
-        /*
-         * Store the authenticated user in the session.
-         */
-
         req.session.user = user;
 
-        /*
-         * Diagnostic logging.
-         * Do not log passwords or password hashes.
-         */
-
-        if (process.env.NODE_ENV !== "production") {
-
-            console.log(
-                "LOGIN: Authentication succeeded."
-            );
-
-            console.log(
-                "LOGIN: Session ID:",
-                req.sessionID
-            );
-
-            console.log(
-                "LOGIN: Session contains user:",
-                Boolean(req.session.user)
-            );
-        }
-
-        /*
-         * Save the session before redirecting.
-         */
-
         return req.session.save((error) => {
-
             if (error) {
-
                 console.error(
                     "LOGIN: Session save failed:",
                     error.message
@@ -187,27 +124,12 @@ const processLoginForm = async (
                 return res.redirect("/login");
             }
 
-            if (process.env.NODE_ENV !== "production") {
-
-                console.log(
-                    "LOGIN: Session saved successfully."
-                );
-            }
-
-            req.flash(
-                "success",
-                "Login successful!"
-            );
+            req.flash("success", "Login successful!");
 
             return res.redirect("/dashboard");
         });
-
     } catch (error) {
-
-        console.error(
-            "Error during login:",
-            error.message
-        );
+        console.error("Error during login:", error.message);
 
         req.flash(
             "error",
@@ -223,33 +145,25 @@ const processLoginForm = async (
    PROCESS LOGOUT
 --------------------------------------------------------- */
 
-const processLogout = (
-    req,
-    res
-) => {
-
+const processLogout = (req, res) => {
     if (!req.session) {
         return res.redirect("/login");
     }
 
-    req.session.destroy(
-        (error) => {
-
-            if (error) {
-
-                console.error(
-                    "Error destroying session:",
-                    error.message
-                );
-
-                return res.redirect("/login");
-            }
-
-            res.clearCookie("connect.sid");
+    req.session.destroy((error) => {
+        if (error) {
+            console.error(
+                "Error destroying session:",
+                error.message
+            );
 
             return res.redirect("/login");
         }
-    );
+
+        res.clearCookie("connect.sid");
+
+        return res.redirect("/login");
+    });
 };
 
 
@@ -257,29 +171,8 @@ const processLogout = (
    REQUIRE LOGIN MIDDLEWARE
 --------------------------------------------------------- */
 
-const requireLogin = (
-    req,
-    res,
-    next
-) => {
-
-    if (
-        !req.session ||
-        !req.session.user
-    ) {
-
-        if (process.env.NODE_ENV !== "production") {
-
-            console.log(
-                "AUTH: Dashboard access denied.",
-                {
-                    sessionExists: Boolean(req.session),
-                    userExists: Boolean(req.session?.user),
-                    sessionID: req.sessionID
-                }
-            );
-        }
-
+const requireLogin = (req, res, next) => {
+    if (!req.session || !req.session.user) {
         req.flash(
             "error",
             "You must be logged in to access that page."
@@ -296,21 +189,9 @@ const requireLogin = (
    REQUIRE ROLE MIDDLEWARE
 --------------------------------------------------------- */
 
-const requireRole = (
-    requiredRole
-) => {
-
-    return (
-        req,
-        res,
-        next
-    ) => {
-
-        if (
-            !req.session ||
-            !req.session.user
-        ) {
-
+const requireRole = (requiredRole) => {
+    return (req, res, next) => {
+        if (!req.session || !req.session.user) {
             req.flash(
                 "error",
                 "You must be logged in to access that page."
@@ -319,10 +200,7 @@ const requireRole = (
             return res.redirect("/login");
         }
 
-        if (
-            req.session.user.role !== requiredRole
-        ) {
-
+        if (req.session.user.role !== requiredRole) {
             req.flash(
                 "error",
                 "You do not have permission to access that page."
@@ -340,6 +218,7 @@ const requireRole = (
    SHOW DASHBOARD
 --------------------------------------------------------- */
 
+<<<<<<< HEAD
 const showDashboard = async (
     req,
     res,
@@ -369,6 +248,51 @@ const showDashboard = async (
 
         next(error);
 
+=======
+const showDashboard = async (req, res) => {
+    const user = req.session?.user;
+
+    if (!user) {
+        req.flash(
+            "error",
+            "You must be logged in to access your dashboard."
+        );
+
+        return res.redirect("/login");
+    }
+
+    try {
+        const volunteeredProjects = await getVolunteeredProjects(
+            user.user_id
+        );
+
+        return res.render("dashboard", {
+            title: "Dashboard",
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            volunteeredProjects,
+            success: req.flash("success"),
+            errors: req.flash("error")
+        });
+    } catch (error) {
+        console.error(
+            "Error loading dashboard:",
+            error.message
+        );
+
+        req.flash(
+            "error",
+            "Unable to load your dashboard. Please try again."
+        );
+
+        return res.status(500).render("errors/error", {
+            title: "Server Error",
+            error: {
+                message: "Unable to load the dashboard."
+            }
+        });
+>>>>>>> refs/remotes/origin/main
     }
 };
 
@@ -377,37 +301,28 @@ const showDashboard = async (
    SHOW USERS PAGE
 --------------------------------------------------------- */
 
-const showUsersPage = async (
-    req,
-    res
-) => {
-
+const showUsersPage = async (req, res) => {
     try {
-
         const users = await getAllUsers();
 
-        return res.render(
-            "users",
-            {
-                title: "Users",
-                users
-            }
-        );
-
+        return res.render("users", {
+            title: "Users",
+            users,
+            success: req.flash("success"),
+            errors: req.flash("error")
+        });
     } catch (error) {
-
         console.error(
             "Error retrieving users:",
             error.message
         );
 
-        return res.status(500).render(
-            "errors/error",
-            {
-                title: "Server Error",
-                error
+        return res.status(500).render("errors/error", {
+            title: "Server Error",
+            error: {
+                message: "Unable to retrieve registered users."
             }
-        );
+        });
     }
 };
 
